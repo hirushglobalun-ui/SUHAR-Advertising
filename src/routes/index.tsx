@@ -34,7 +34,6 @@ import {
   Mail,
   MapPin,
   Clock,
-  MessageCircle,
   Star,
   ChevronDown,
   Facebook,
@@ -915,17 +914,6 @@ function Contact() {
                 </Reveal>
               ))}
             </div>
-
-            <Reveal delay={520}>
-              <div className="mt-6 flex flex-wrap gap-3">
-                <a
-                  href="https://wa.me/96824567890"
-                  className="inline-flex items-center gap-2 rounded-full bg-success/15 px-5 py-2.5 text-sm font-semibold text-success ring-1 ring-success/30 transition-all hover:bg-success/25"
-                >
-                  <MessageCircle className="h-4 w-4" /> {t("contact.info.whatsapp")}
-                </a>
-              </div>
-            </Reveal>
           </div>
 
           <Reveal delay={200}>
