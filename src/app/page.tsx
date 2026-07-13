@@ -1,4 +1,5 @@
-import { createFileRoute } from "@tanstack/react-router";
+"use client";
+
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import {
   ArrowUpRight,
@@ -55,9 +56,9 @@ import p6 from "@/assets/portfolio-6.jpg";
 
 import { useLang, useT, dict } from "@/lib/i18n";
 
-export const Route = createFileRoute("/")({
-  component: Landing,
-});
+export default function Page() {
+  return <Landing />;
+}
 
 /* ---------- Small utilities ---------- */
 
@@ -270,7 +271,7 @@ function Hero() {
       {/* background */}
       <div className="absolute inset-0">
         <img
-          src={heroImg}
+          src={heroImg.src}
           alt="SUHAR advertising showcase — illuminated corporate signage at dusk"
           className="h-full w-full object-cover opacity-60"
           width={1920}
@@ -356,7 +357,7 @@ function Intro() {
           <div className="relative">
             <div className="aspect-[4/5] overflow-hidden rounded-3xl">
               <img
-                src={aboutImg}
+                src={aboutImg.src}
                 alt="SUHAR creative team reviewing branding work"
                 loading="lazy"
                 className="h-full w-full object-cover"
@@ -519,7 +520,7 @@ function Why() {
 
 /* ---------- Portfolio ---------- */
 
-const portfolioImgs = [p1, p2, p3, p4, p5, p6];
+const portfolioImgs = [p1.src, p2.src, p3.src, p4.src, p5.src, p6.src];
 const portfolioSpans = [
   "lg:col-span-2 lg:row-span-2",
   "lg:col-span-1 lg:row-span-1",
