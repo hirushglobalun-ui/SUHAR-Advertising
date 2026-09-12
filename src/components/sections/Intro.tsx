@@ -1,0 +1,69 @@
+"use client";
+
+import { Sparkles } from "lucide-react";
+import Reveal from "@/components/common/Reveal";
+import Counter from "@/components/common/Counter";
+import SectionLabel from "@/components/common/SectionLabel";
+import { useLang, useT } from "@/lib/i18n";
+import { getImgSrc, aboutImg } from "@/lib/data";
+
+export default function Intro() {
+  const stats = useT<{ v: number; s: string; l: string }[]>("intro.stats");
+  const { t } = useLang();
+  return (
+    <section id="about" className="relative bg-white py-14 lg:py-20">
+      <div className="mx-auto grid max-w-7xl grid-cols-1 gap-10 px-6 lg:grid-cols-2 lg:gap-14 lg:px-10">
+        <Reveal>
+          <div className="relative">
+            <div className="aspect-[4/5] overflow-hidden rounded-3xl">
+              <img
+                src={getImgSrc(aboutImg)}
+                alt="SUHAR creative team reviewing branding work"
+                loading="lazy"
+                className="h-full w-full object-cover"
+              />
+            </div>
+            <div className="absolute -bottom-6 -right-6 hidden rounded-2xl border border-navy/10 bg-white p-6 shadow-2xl lg:block rtl:-left-6 rtl:right-auto">
+              <div className="flex items-center gap-3">
+                <div className="grid h-12 w-12 place-items-center rounded-xl bg-orange text-white">
+                  <Sparkles className="h-6 w-6" />
+                </div>
+                <div>
+                  <div className="font-display text-2xl font-extrabold text-navy">15+</div>
+                  <div className="text-xs uppercase tracking-widest text-navy/60">Years of craft</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </Reveal>
+
+        <div className="flex flex-col justify-center">
+          <Reveal>
+            <SectionLabel>{t("intro.eyebrow")}</SectionLabel>
+          </Reveal>
+          <Reveal delay={100}>
+            <h2 className="mt-4 font-display text-4xl font-extrabold leading-tight text-navy sm:text-5xl">
+              {t("intro.title")}
+            </h2>
+          </Reveal>
+          <Reveal delay={180}>
+            <p className="mt-4 text-base leading-relaxed text-navy/70">{t("intro.body")}</p>
+          </Reveal>
+
+          <Reveal delay={260}>
+            <div className="mt-6 grid grid-cols-2 gap-4 sm:gap-6">
+              {stats.map((s, i) => (
+                <div key={i} className="rounded-2xl border border-navy/10 bg-surface p-5">
+                  <div className="font-display text-3xl sm:text-4xl font-extrabold text-navy">
+                    <Counter to={s.v} suffix={s.s} />
+                  </div>
+                  <div className="mt-1 text-sm text-navy/60">{s.l}</div>
+                </div>
+              ))}
+            </div>
+          </Reveal>
+        </div>
+      </div>
+    </section>
+  );
+}
