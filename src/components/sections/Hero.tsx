@@ -1,14 +1,18 @@
 "use client";
 
 import { ArrowUpRight, ChevronDown, Sparkles } from "lucide-react";
+import { useRef } from "react";
+import { useSectionScrollAnimation } from "@/hooks/useSectionScrollAnimation";
 import Reveal from "@/components/common/Reveal";
 import { useLang } from "@/lib/i18n";
 import { getImgSrc, heroImg } from "@/lib/data";
 
 export default function Hero() {
+  const sectionRef = useRef<HTMLElement | null>(null);
+  useSectionScrollAnimation(sectionRef);
   const { t } = useLang();
   return (
-    <section id="top" className="relative min-h-screen overflow-hidden bg-navy text-white">
+    <section ref={sectionRef} id="top" className="relative min-h-screen overflow-hidden bg-navy text-white">
       {/* background */}
       <div className="absolute inset-0">
         <img
@@ -36,7 +40,7 @@ export default function Hero() {
       {/* subtle grid overlay */}
       <div className="pointer-events-none absolute inset-0 opacity-[0.06] grid-lines" />
 
-      <div className="relative z-10 mx-auto flex min-h-screen max-w-7xl flex-col justify-center px-6 pt-28 pb-16 lg:px-10 lg:pt-32 lg:pb-16">
+      <div className="relative z-10 mx-auto flex min-h-screen max-w-7xl flex-col justify-center px-6 pt-20 pb-12 lg:px-10 lg:pt-28 lg:pb-12">
         <Reveal>
           <div className="inline-flex items-center gap-2 rounded-full border border-gold/30 bg-navy/60 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.24em] text-white/95 backdrop-blur-md shadow-sm">
             <Sparkles className="h-3.5 w-3.5 text-gold" />
@@ -66,7 +70,7 @@ export default function Hero() {
               <ArrowUpRight className="h-4 w-4 rtl:rotate-[-90deg]" />
             </a>
             <a
-              href="#portfolio"
+              href="/works"
               className="group inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/5 px-7 py-4 text-sm font-semibold text-white backdrop-blur-sm transition-all hover:bg-white/10 hover:border-gold/40"
             >
               {t("hero.cta2")}

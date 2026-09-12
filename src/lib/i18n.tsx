@@ -18,7 +18,7 @@ export const dict = {
     nav: {
       home: "Home",
       services: "Services",
-      portfolio: "Portfolio",
+      portfolio: "Works",
       about: "About",
       process: "Process",
       contact: "Contact",
@@ -30,7 +30,7 @@ export const dict = {
       subtitle:
         "From corporate branding to large-format signage, digital printing and creative fabrication — we bring ideas to life.",
       cta1: "Request a Quote",
-      cta2: "View Portfolio",
+      cta2: "View Works",
       scroll: "Scroll to explore",
     },
     intro: {
@@ -88,7 +88,7 @@ export const dict = {
       ] as [string, string][],
     },
     portfolio: {
-      eyebrow: "Selected Work",
+      eyebrow: "Works",
       title: "Recent projects, across every medium.",
       cats: ["All", "Branding", "Signage", "Printing", "Vehicle", "Exhibition", "LED"],
       items: [
@@ -150,41 +150,7 @@ export const dict = {
         ],
       ] as [string, string, string][],
     },
-    stats: {
-      title: "Numbers we're proud of.",
-      items: [
-        [500, "+", "Projects Delivered"],
-        [200, "+", "Clients Served"],
-        [15, "+", "Years in Oman"],
-        [98, "%", "Client Satisfaction"],
-      ] as [number, string, string][],
-    },
-    faq: {
-      eyebrow: "FAQ",
-      title: "Answers to what clients ask most.",
-      items: [
-        [
-          "Do you handle projects across all of Oman?",
-          "Yes. Our teams deliver and install nationwide, from Muscat to Salalah and everywhere in between.",
-        ],
-        [
-          "Can you manage design and fabrication together?",
-          "Absolutely. Everything — from concept through installation — is handled in-house by our own teams.",
-        ],
-        [
-          "What is your typical turnaround time?",
-          "Most standard signage projects ship within 2–3 weeks. Larger campaigns are scoped during consultation.",
-        ],
-        [
-          "Do you offer maintenance after installation?",
-          "Yes. All installations include warranty coverage, and we offer annual maintenance contracts.",
-        ],
-        [
-          "Can you work bilingually in Arabic and English?",
-          "Yes — our design team is fully bilingual and produces branding in both scripts natively.",
-        ],
-      ] as [string, string][],
-    },
+
     contact: {
       eyebrow: "Get in Touch",
       title: "Let's build something remarkable.",
@@ -261,7 +227,7 @@ export const dict = {
         ["تصميم الشعار", "شعارات ذات معنى وثبات."],
         ["لافتات داخلية", "إرشاد وهوية للمساحات الداخلية."],
         ["لافتات خارجية", "لافتات مقاومة للعوامل بتأثير عالٍ."],
-        ["لوحات LED", "إضاءة نهاراً وليلاً."],
+        ["لوحات ليد", "إضاءة نهاراً وليلاً."],
         ["هوية المركبات", "أساطيل تحمل العلامة أينما ذهبت."],
         ["طباعة رقمية", "طباعة كبيرة زاهية الألوان."],
         ["طباعة أوفست", "لمسات نهائية دقيقة وألوان راقية."],
@@ -355,41 +321,7 @@ export const dict = {
         ],
       ] as [string, string, string][],
     },
-    stats: {
-      title: "أرقام نفتخر بها.",
-      items: [
-        [500, "+", "مشروع منجز"],
-        [200, "+", "عميل"],
-        [15, "+", "سنة في عُمان"],
-        [98, "%", "رضا العملاء"],
-      ] as [number, string, string][],
-    },
-    faq: {
-      eyebrow: "الأسئلة الشائعة",
-      title: "أكثر ما يسأل عنه عملاؤنا.",
-      items: [
-        [
-          "هل تعملون في جميع أنحاء عُمان؟",
-          "نعم، نصل ونركّب في جميع محافظات السلطنة من مسقط إلى صلالة.",
-        ],
-        [
-          "هل تتولّون التصميم والتصنيع معاً؟",
-          "بالتأكيد — من الفكرة إلى التركيب، كل شيء يُنجز داخلياً بفرقنا.",
-        ],
-        [
-          "ما هي المدة المعتادة للتسليم؟",
-          "معظم مشاريع اللافتات القياسية تُسلَّم خلال أسبوعين إلى ثلاثة.",
-        ],
-        [
-          "هل تقدّمون صيانة بعد التركيب؟",
-          "نعم، جميع أعمالنا تشمل ضماناً، ونوفّر عقود صيانة سنوية.",
-        ],
-        [
-          "هل تعملون بالعربية والإنجليزية معاً؟",
-          "نعم — فريقنا ثنائي اللغة وينتج بالهويتين بشكل احترافي.",
-        ],
-      ] as [string, string][],
-    },
+
     contact: {
       eyebrow: "تواصل معنا",
       title: "لنصنع شيئاً استثنائياً معاً.",

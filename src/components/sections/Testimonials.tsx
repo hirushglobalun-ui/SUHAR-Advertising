@@ -8,18 +8,17 @@ export default function Testimonials() {
   const { t } = useLang();
   const items = useT<[string, string, string][]>("testimonials.items");
   return (
-    <section className="relative overflow-hidden bg-gradient-to-br from-navy via-navy to-[oklch(0.22_0.05_265)] py-14 text-white lg:py-20">
-      <div className="pointer-events-none absolute top-1/2 left-1/2 h-[600px] w-[600px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-royal/20 blur-[120px]" />
+    <section className="relative overflow-hidden bg-white py-14 text-navy lg:py-20">
       <div className="relative mx-auto max-w-7xl px-6 lg:px-10">
         <div className="max-w-3xl">
           <Reveal>
-            <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.22em]">
+            <div className="inline-flex items-center gap-2 rounded-full border border-navy/10 bg-surface px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.22em] text-navy/80">
               <span className="h-1.5 w-1.5 rounded-full bg-orange" />
               {t("testimonials.eyebrow")}
             </div>
           </Reveal>
           <Reveal delay={100}>
-            <h2 className="mt-4 font-display text-4xl font-extrabold leading-tight sm:text-5xl">
+            <h2 className="mt-4 font-display text-4xl font-extrabold leading-tight text-navy sm:text-5xl">
               {t("testimonials.title")}
             </h2>
           </Reveal>
@@ -28,7 +27,7 @@ export default function Testimonials() {
         <div className="mt-10 grid grid-cols-1 gap-6 lg:grid-cols-3">
           {items.map(([name, role, quote], i) => (
             <Reveal key={name} delay={i * 100}>
-              <div className="glass-dark h-full rounded-3xl p-8">
+              <div className="h-full rounded-3xl bg-[#062D4F] p-8 text-white">
                 <div className="flex gap-1 text-orange">
                   {Array.from({ length: 5 }).map((_, k) => (
                     <Star key={k} className="h-4 w-4 fill-current" />

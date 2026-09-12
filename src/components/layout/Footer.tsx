@@ -54,7 +54,7 @@ export default function Footer() {
             <ul className="mt-4 space-y-2 text-sm">
               {[
                 ["#services", t("nav.services")],
-                ["#portfolio", t("nav.portfolio")],
+                ["/works", t("nav.portfolio")],
                 ["#about", t("nav.about")],
                 ["#process", t("nav.process")],
                 ["#contact", t("nav.contact")],

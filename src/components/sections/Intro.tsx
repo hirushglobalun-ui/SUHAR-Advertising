@@ -1,17 +1,67 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import { Sparkles } from "lucide-react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
 import Reveal from "@/components/common/Reveal";
 import Counter from "@/components/common/Counter";
 import SectionLabel from "@/components/common/SectionLabel";
 import { useLang, useT } from "@/lib/i18n";
 import { getImgSrc, aboutImg } from "@/lib/data";
 
+gsap.registerPlugin(ScrollTrigger);
+
 export default function Intro() {
+  const sectionRef = useRef<HTMLElement>(null);
   const stats = useT<{ v: number; s: string; l: string }[]>("intro.stats");
   const { t } = useLang();
+
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section) return;
+
+    const prefersReduced = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
+
+    if (prefersReduced) {
+      gsap.set(section, { opacity: 1, x: 0, scale: 1 });
+      return;
+    }
+
+    const vw = window.innerWidth;
+    const xOffset = vw >= 1024 ? 60 : vw >= 640 ? 40 : 25;
+
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        section,
+        {
+          opacity: 0,
+          x: xOffset,
+          scale: 0.98,
+        },
+        {
+          opacity: 1,
+          x: 0,
+          scale: 1,
+          duration: 0.9,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: section,
+            start: "top 80%",
+            toggleActions: "play reverse play reverse",
+          },
+        }
+      );
+    }, section);
+
+    return () => ctx.revert();
+  }, []);
+
   return (
-    <section id="about" className="relative bg-white py-14 lg:py-20">
+    <section ref={sectionRef} id="about" className="relative overflow-hidden bg-white py-14 lg:py-20">
       <div className="mx-auto grid max-w-7xl grid-cols-1 gap-10 px-6 lg:grid-cols-2 lg:gap-14 lg:px-10">
         <Reveal>
           <div className="relative">
