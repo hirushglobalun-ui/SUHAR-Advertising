@@ -16,7 +16,7 @@ gsap.registerPlugin(ScrollTrigger);
 export default function Intro() {
   const sectionRef = useRef<HTMLElement>(null);
   const stats = useT<{ v: number; s: string; l: string }[]>("intro.stats");
-  const { t } = useLang();
+  const { t, lang } = useLang();
 
   useEffect(() => {
     const section = sectionRef.current;
@@ -65,7 +65,7 @@ export default function Intro() {
       <div className="mx-auto grid max-w-7xl grid-cols-1 gap-10 px-6 lg:grid-cols-2 lg:gap-14 lg:px-10">
         <Reveal>
           <div className="relative">
-            <div className="aspect-[4/5] overflow-hidden rounded-3xl">
+            <div className="aspect-[4/3] sm:aspect-[4/5] overflow-hidden rounded-2xl sm:rounded-3xl shadow-lg">
               <img
                 src={getImgSrc(aboutImg)}
                 alt="SUHAR creative team reviewing branding work"
@@ -79,8 +79,8 @@ export default function Intro() {
                   <Sparkles className="h-6 w-6" />
                 </div>
                 <div>
-                  <div className="font-display text-2xl font-extrabold text-navy">15+</div>
-                  <div className="text-xs uppercase tracking-widest text-navy/60">Years of craft</div>
+                  <div className="font-display text-2xl font-extrabold text-navy">1996</div>
+                  <div className="text-xs uppercase tracking-widest text-navy/60">{lang === "ar" ? "تأسست · 28+ عاماً" : "Established · 28+ Yrs"}</div>
                 </div>
               </div>
             </div>
@@ -92,22 +92,22 @@ export default function Intro() {
             <SectionLabel>{t("intro.eyebrow")}</SectionLabel>
           </Reveal>
           <Reveal delay={100}>
-            <h2 className="mt-4 font-display text-4xl font-extrabold leading-tight text-navy sm:text-5xl">
+            <h2 className="mt-3 sm:mt-4 font-display text-2xl sm:text-4xl lg:text-5xl font-extrabold leading-tight text-navy">
               {t("intro.title")}
             </h2>
           </Reveal>
           <Reveal delay={180}>
-            <p className="mt-4 text-base leading-relaxed text-navy/70">{t("intro.body")}</p>
+            <p className="mt-3 sm:mt-4 text-sm sm:text-base leading-relaxed text-navy/75">{t("intro.body")}</p>
           </Reveal>
 
-          <Reveal delay={260}>
-            <div className="mt-6 grid grid-cols-2 gap-4 sm:gap-6">
+          <Reveal delay={220}>
+            <div className="mt-6 grid grid-cols-2 gap-3 sm:gap-6">
               {stats.map((s, i) => (
-                <div key={i} className="rounded-2xl border border-navy/10 bg-surface p-5">
-                  <div className="font-display text-3xl sm:text-4xl font-extrabold text-navy">
+                <div key={i} className="rounded-2xl border border-navy/10 bg-surface p-3.5 sm:p-5">
+                  <div className="font-display text-2xl sm:text-4xl font-extrabold text-navy">
                     <Counter to={s.v} suffix={s.s} />
                   </div>
-                  <div className="mt-1 text-sm text-navy/60">{s.l}</div>
+                  <div className="mt-1 text-xs sm:text-sm text-navy/60 leading-snug">{s.l}</div>
                 </div>
               ))}
             </div>

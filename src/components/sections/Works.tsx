@@ -1,10 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { ArrowUpRight, X } from "lucide-react";
+import Link from "next/link";
+import { ArrowUpRight } from "lucide-react";
 import Reveal from "@/components/common/Reveal";
 import { useLang, useT } from "@/lib/i18n";
 import { getImgSrc, portfolioImgs } from "@/lib/data";
+import { projectsData } from "@/lib/projects";
 
 export default function Portfolio() {
   const { t, lang } = useLang();
@@ -12,11 +14,11 @@ export default function Portfolio() {
   const cats = useT<string[]>("portfolio.cats");
 
   const [active, setActive] = useState(0);
-  const [lightbox, setLightbox] = useState<number | null>(null);
 
   const filtered = items
     .map((it, i) => ({ it, i }))
-    .filter(({ it }) => active === 0 || it[2] === cats[active]);
+    .filter(({ it }) => active === 0 || it[2] === cats[active])
+    .slice(0, 6);
 
   return (
     <section id="works" className="bg-navy py-14 text-white lg:py-20">
@@ -44,7 +46,7 @@ export default function Portfolio() {
               href="/works"
               className="group inline-flex items-center gap-2 rounded-full border border-orange bg-orange px-5 py-2.5 text-xs font-bold uppercase tracking-wider text-white transition-all duration-300 hover:border-white hover:bg-white hover:text-navy"
             >
-              View Works
+              {lang === "ar" ? "عرض جميع الأعمال" : "View All Works"}
               <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
             </a>
           </Reveal>
@@ -57,8 +59,8 @@ export default function Portfolio() {
               <button
                 key={c}
                 onClick={() => setActive(i)}
-                className={`rounded-full border px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wider transition-all sm:px-4 sm:py-2 sm:text-xs ${active === i
-                    ? "border-orange bg-orange text-white"
+                className={`rounded-full border px-3.5 py-1.5 text-[11px] font-semibold uppercase tracking-wider transition-all sm:px-4 sm:py-2 sm:text-xs ${active === i
+                    ? "border-orange bg-orange text-white shadow-md shadow-orange/30"
                     : "border-white/15 text-white/70 hover:border-white/40 hover:text-white"
                   }`}
               >
@@ -68,104 +70,66 @@ export default function Portfolio() {
           </div>
         </Reveal>
 
-        {/* Portfolio Grid Container (Stable Section Height Matching ALL Filter Baseline) */}
-        <div className="mt-8 grid min-h-[1776px] content-start sm:min-h-[1100px] lg:min-h-[880px] grid-cols-1 gap-4 sm:gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        {/* Portfolio Grid */}
+        <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {filtered.map(({ it, i }) => {
             const imgSrc = getImgSrc(portfolioImgs[i % portfolioImgs.length]);
+            const project = projectsData[i % projectsData.length];
+            const projectSlug = project?.slug || "al-fanar-tower";
 
             return (
               <Reveal key={`${active}-${i}`} delay={(i % 3) * 80} className="h-full">
-                <button
-                  onClick={() => setLightbox(i)}
-                  className="group relative flex h-[240px] sm:h-[260px] lg:h-[280px] w-full flex-col overflow-hidden rounded-2xl bg-[#06243d] text-left border border-white/10 shadow-lg shadow-navy/20 transition-all duration-300 hover:border-orange/30"
+                <Link
+                  href={`/works/${projectSlug}`}
+                  className="group relative flex aspect-[4/3] w-full flex-col justify-between overflow-hidden rounded-2xl sm:rounded-3xl border border-white/10 bg-[#06243d] p-5 sm:p-6 text-left shadow-xl shadow-navy/40 transition-all duration-500 hover:-translate-y-1.5 hover:border-orange/60 hover:shadow-2xl hover:shadow-orange/15 focus:outline-none focus:ring-2 focus:ring-orange"
                 >
-                  {/* Fixed Compact Media Area Container */}
-                  <div className="relative h-[130px] sm:h-[140px] lg:h-[150px] w-full overflow-hidden bg-[#0b2d47]">
-                    <img
-                      src={imgSrc}
-                      alt={it[0]}
-                      loading="lazy"
-                      className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-                    />
+                  {/* Full-bleed Photo Background */}
+                  <img
+                    src={imgSrc}
+                    alt={it[0]}
+                    loading="lazy"
+                    className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+                  />
 
-                    {/* Gradient Overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#06243d] via-navy/30 to-transparent opacity-80 transition-opacity duration-500 group-hover:opacity-95" />
+                  {/* Multi-layered Cinematic Vignette */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#041525] via-[#041525]/60 to-transparent opacity-90 transition-opacity duration-500 group-hover:opacity-95" />
+                  <div className="absolute inset-0 bg-gradient-to-b from-[#041525]/50 via-transparent to-transparent opacity-70" />
 
-                    {/* Arrow Indicator on Hover */}
-                    <div className="absolute right-3 top-3 z-10 grid h-8 w-8 place-items-center rounded-full bg-white/10 opacity-0 backdrop-blur-sm transition-all duration-300 group-hover:bg-orange group-hover:opacity-100">
-                      <ArrowUpRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                  {/* Top Floating Badge & Action Indicator */}
+                  <div className="relative z-10 flex w-full items-center justify-between">
+                    <span className="inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-navy/70 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-orange shadow-sm backdrop-blur-md transition-colors duration-300 group-hover:border-orange/40 group-hover:bg-navy/90">
+                      <span className="h-1.5 w-1.5 rounded-full bg-orange animate-pulse" />
+                      {it[2]}
+                    </span>
+
+                    <div className="grid h-9 w-9 place-items-center rounded-full border border-white/20 bg-white/10 text-white backdrop-blur-md transition-all duration-300 group-hover:scale-110 group-hover:border-orange group-hover:bg-orange group-hover:text-white group-hover:shadow-md group-hover:shadow-orange/30">
+                      <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                     </div>
                   </div>
 
-                  {/* Compact Content Section */}
-                  <div className="flex flex-1 flex-col justify-between p-3.5 sm:p-4 bg-[#06243d]">
-                    <div>
-                      <div className="text-[9px] sm:text-[10px] font-semibold uppercase tracking-[0.24em] text-orange">
-                        {it[2]}
-                      </div>
+                  {/* Bottom Project Info */}
+                  <div className="relative z-10 mt-auto pt-6 text-left rtl:text-right">
+                    <h3 className="font-display text-lg sm:text-xl font-bold text-white transition-colors duration-300 group-hover:text-orange line-clamp-1">
+                      {it[0]}
+                    </h3>
 
-                      <div className="mt-1 font-display text-base sm:text-lg font-bold text-white line-clamp-1">
-                        {it[0]}
-                      </div>
+                    <p className="mt-1 text-xs sm:text-sm text-white/80 line-clamp-1 font-medium">
+                      {it[1]}
+                    </p>
 
-                      <div className="mt-0.5 text-[11px] sm:text-xs text-white/70 line-clamp-1">
-                        {it[1]}
-                      </div>
-                    </div>
-
-                    {/* View Work Button */}
-                    <div className="mt-2">
-                      <span className="inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-white/10 px-3 py-1.5 text-[11px] sm:text-xs font-semibold text-white backdrop-blur-sm transition-all duration-300 group-hover:border-orange group-hover:bg-orange group-hover:text-white">
-                        View Work
+                    <div className="mt-3.5 flex items-center">
+                      <span className="inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-white/10 px-3.5 py-1 text-[11px] font-semibold text-white/90 backdrop-blur-sm transition-all duration-300 group-hover:border-orange group-hover:bg-orange group-hover:text-white">
+                        {lang === "ar" ? "عرض التفاصيل الكاملة" : "View Project Details"}
                         <ArrowUpRight className="h-3 w-3 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                       </span>
                     </div>
                   </div>
-                </button>
+                </Link>
               </Reveal>
             );
           })}
         </div>
       </div>
-
-      {/* Lightbox */}
-      {lightbox !== null && (
-        <div
-          className="fixed inset-0 z-[100] grid place-items-center bg-navy/95 p-6 backdrop-blur-xl"
-          onClick={() => setLightbox(null)}
-        >
-          <button
-            className="absolute right-6 top-6 grid h-11 w-11 place-items-center rounded-full bg-white/10 text-white transition-colors hover:bg-white/20"
-            onClick={() => setLightbox(null)}
-            aria-label="Close"
-          >
-            <X className="h-5 w-5" />
-          </button>
-
-          <div
-            className="max-h-[85vh] max-w-5xl overflow-hidden rounded-2xl"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <img
-              src={getImgSrc(portfolioImgs[lightbox])}
-              alt={items[lightbox][0]}
-              className="h-auto w-full"
-            />
-          </div>
-
-          <div className="absolute bottom-6 left-1/2 w-full -translate-x-1/2 px-6 text-center text-white">
-            <div className="font-display text-xl font-bold">
-              {items[lightbox][0]}
-            </div>
-
-            <div className="mt-1 text-sm text-white/70">
-              {items[lightbox][1]}
-            </div>
-          </div>
-
-          <span className="sr-only">{lang}</span>
-        </div>
-      )}
     </section>
   );
 }

@@ -24,31 +24,47 @@ export default function Contact() {
               </div>
             </Reveal>
             <Reveal delay={100}>
-              <h2 className="mt-4 font-display text-4xl font-extrabold leading-tight sm:text-5xl">
+              <h2 className="mt-3 sm:mt-4 font-display text-3xl font-extrabold leading-tight sm:text-4xl lg:text-5xl">
                 {t("contact.title")}
               </h2>
             </Reveal>
             <Reveal delay={180}>
-              <p className="mt-4 text-base text-white/70">{t("contact.subtitle")}</p>
+              <p className="mt-3 sm:mt-4 text-sm sm:text-base text-white/70">{t("contact.subtitle")}</p>
             </Reveal>
 
             <div className="mt-6 space-y-3 sm:space-y-4">
               {[
                 { icon: MapPin, label: t("contact.info.location"), value: t("contact.info.address") },
                 { icon: Clock, label: t("contact.info.hours"), value: t("contact.info.hoursValue") },
-                { icon: Phone, label: t("contact.info.call"), value: "+968 2456 7890" },
-                { icon: Mail, label: t("contact.info.email"), value: "hello@suhar.om" },
+                { icon: Phone, label: t("contact.info.call"), value: "+968 9190 9331", href: "tel:+96891909331" },
+                { icon: Mail, label: t("contact.info.email"), value: "baharalsuwaihara@gmail.com", href: "mailto:baharalsuwaihara@gmail.com" },
               ].map((c, i) => (
                 <Reveal key={i} delay={220 + i * 60}>
-                  <div className="flex items-center gap-4 rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-sm">
-                    <div className="grid h-11 w-11 place-items-center rounded-xl bg-orange text-white">
-                      <c.icon className="h-5 w-5" />
+                  {c.href ? (
+                    <a
+                      href={c.href}
+                      className="group flex items-center gap-3 sm:gap-4 rounded-2xl border border-white/10 bg-white/5 p-3.5 sm:p-4 backdrop-blur-sm transition-all duration-300 hover:border-orange/50 hover:bg-white/[0.08]"
+                    >
+                      <div className="grid h-10 w-10 sm:h-11 sm:w-11 shrink-0 place-items-center rounded-xl bg-orange text-white transition-transform duration-300 group-hover:scale-105">
+                        <c.icon className="h-5 w-5" />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <div className="text-[11px] uppercase tracking-wider text-white/50">{c.label}</div>
+                        <div className="truncate text-xs sm:text-sm font-semibold text-white transition-colors group-hover:text-orange">{c.value}</div>
+                      </div>
+                      <ArrowUpRight className="h-4 w-4 shrink-0 text-white/40 transition-all duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-orange rtl:rotate-[-90deg]" />
+                    </a>
+                  ) : (
+                    <div className="flex items-center gap-3 sm:gap-4 rounded-2xl border border-white/10 bg-white/5 p-3.5 sm:p-4 backdrop-blur-sm">
+                      <div className="grid h-10 w-10 sm:h-11 sm:w-11 shrink-0 place-items-center rounded-xl bg-orange text-white">
+                        <c.icon className="h-5 w-5" />
+                      </div>
+                      <div className="min-w-0">
+                        <div className="text-[11px] uppercase tracking-wider text-white/50">{c.label}</div>
+                        <div className="text-xs sm:text-sm font-semibold text-white">{c.value}</div>
+                      </div>
                     </div>
-                    <div>
-                      <div className="text-xs uppercase tracking-wider text-white/50">{c.label}</div>
-                      <div className="text-sm font-semibold">{c.value}</div>
-                    </div>
-                  </div>
+                  )}
                 </Reveal>
               ))}
             </div>
@@ -60,7 +76,7 @@ export default function Contact() {
                 e.preventDefault();
                 setSent(true);
               }}
-              className="rounded-3xl border border-white/10 bg-white/[0.04] p-8 backdrop-blur-xl"
+              className="rounded-3xl border border-white/10 bg-white/[0.04] p-5 sm:p-8 backdrop-blur-xl"
             >
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <Field label={t("contact.form.name")} name="name" required />
@@ -73,7 +89,7 @@ export default function Contact() {
                   </label>
                   <select
                     name="service"
-                    className="w-full rounded-xl border border-white/15 bg-white/5 px-4 py-3 text-sm text-white outline-none transition-all focus:border-orange/60"
+                    className="w-full rounded-xl border border-white/15 bg-white/5 px-4 py-3 text-base sm:text-sm text-white outline-none transition-all focus:border-orange/60"
                     defaultValue=""
                   >
                     <option value="" disabled className="bg-navy">{t("contact.form.pickService")}</option>
@@ -89,7 +105,7 @@ export default function Contact() {
                   <textarea
                     name="message"
                     rows={4}
-                    className="w-full rounded-xl border border-white/15 bg-white/5 px-4 py-3 text-sm text-white outline-none transition-all focus:border-orange/60"
+                    className="w-full rounded-xl border border-white/15 bg-white/5 px-4 py-3 text-base sm:text-sm text-white outline-none transition-all focus:border-orange/60"
                   />
                 </div>
               </div>

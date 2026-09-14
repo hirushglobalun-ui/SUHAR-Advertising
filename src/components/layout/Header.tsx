@@ -20,7 +20,7 @@ export default function Header() {
   }, []);
 
   const nav = [
-    { href: "/", label: "Home" },
+    { href: "/", label: t("nav.home") },
     { href: "/#about", label: t("nav.about") },
     { href: "/#services", label: t("nav.services") },
     { href: "/#works", label: t("nav.portfolio") },

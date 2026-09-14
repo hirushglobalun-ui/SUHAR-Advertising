@@ -117,7 +117,7 @@ export default function Process() {
         {/* Mobile Vertical Timeline */}
         <div className="relative mt-8 lg:hidden">
           {/* Vertical Line */}
-          <div className="absolute bottom-4 left-6 top-4 w-0.5 bg-navy/15">
+          <div className="absolute bottom-4 left-6 rtl:left-auto rtl:right-6 top-4 w-0.5 bg-navy/15">
             <div
               className="h-full w-full origin-top rounded-full bg-gradient-to-b from-navy via-royal to-gold transition-transform duration-1000 ease-out"
               style={{
@@ -135,14 +135,14 @@ export default function Process() {
               return (
                 <div
                   key={title}
-                  className={`relative flex items-start gap-4 pl-16 transition-all duration-1000 ease-out ${isActive
+                  className={`relative flex items-start gap-4 pl-16 rtl:pl-0 rtl:pr-16 transition-all duration-1000 ease-out ${isActive
                       ? "translate-y-0 opacity-100"
                       : "translate-y-3 opacity-40"
                     }`}
                 >
                   {/* Badge */}
                   <div
-                    className={`absolute left-0 top-0.5 z-10 grid h-12 w-12 place-items-center rounded-2xl bg-surface ring-2 ring-[#102E50] shadow-md transition-all duration-1000 ease-out ${isActive ? "scale-105 shadow-gold/40" : ""
+                    className={`absolute left-0 rtl:left-auto rtl:right-0 top-0.5 z-10 grid h-12 w-12 place-items-center rounded-2xl bg-surface ring-2 ring-[#102E50] shadow-md transition-all duration-1000 ease-out ${isActive ? "scale-105 shadow-gold/40" : ""
                       }`}
                   >
                     <span className="font-display text-sm font-extrabold text-gold">
@@ -154,7 +154,7 @@ export default function Process() {
                   <div
                     className={`flex-1 rounded-2xl border border-slate-200/80 bg-white/90 p-4 shadow-sm backdrop-blur-sm transition-all duration-1000 ease-out ${isActive
                         ? "translate-x-0 opacity-100"
-                        : "translate-x-3 opacity-60"
+                        : "translate-x-3 rtl:-translate-x-3 opacity-60"
                       }`}
                   >
                     <h3 className="font-display text-base font-bold text-navy">
@@ -177,7 +177,7 @@ export default function Process() {
           <div className="absolute inset-x-6 top-12 h-0.5 bg-navy/15">
             <div
               ref={lineRef}
-              className="h-full origin-left rounded-full bg-gradient-to-r from-navy via-royal to-gold"
+              className="h-full origin-left rtl:origin-right rounded-full bg-gradient-to-r rtl:bg-gradient-to-l from-navy via-royal to-gold"
             />
           </div>
 

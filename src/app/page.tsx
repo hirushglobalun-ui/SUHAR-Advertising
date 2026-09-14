@@ -3,7 +3,6 @@ import Footer from "@/components/layout/Footer";
 import Hero from "@/components/sections/Hero";
 import Intro from "@/components/sections/Intro";
 import Services from "@/components/sections/Services";
-import WhyChooseUs from "@/components/sections/WhyChooseUs";
 import Works from "@/components/sections/Works";
 import Process from "@/components/sections/Process";
 import Industries from "@/components/sections/Industries";
@@ -19,7 +18,6 @@ export default function HomePage() {
         <Hero />
         <Intro />
         <Services />
-        <WhyChooseUs />
         <Works />
         <Process />
         <Industries />

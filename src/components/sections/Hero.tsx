@@ -49,31 +49,31 @@ export default function Hero() {
         </Reveal>
 
         <Reveal delay={120}>
-          <h1 className="mt-6 max-w-4xl font-display text-5xl font-extrabold leading-[1.05] tracking-tight sm:text-6xl lg:text-7xl">
+          <h1 className="mt-5 sm:mt-6 max-w-4xl font-display text-3xl sm:text-5xl lg:text-7xl font-extrabold leading-[1.1] tracking-tight text-white">
             {t("hero.title")}
           </h1>
         </Reveal>
 
         <Reveal delay={220}>
-          <p className="mt-5 max-w-2xl text-base leading-relaxed text-white sm:text-lg">
+          <p className="mt-4 sm:mt-5 max-w-2xl text-sm sm:text-base lg:text-lg leading-relaxed text-white/90">
             {t("hero.subtitle")}
           </p>
         </Reveal>
 
         <Reveal delay={340}>
-          <div className="mt-8 flex flex-wrap items-center gap-4">
+          <div className="mt-7 sm:mt-8 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 w-full sm:w-auto">
             <a
               href="#contact"
-              className="group inline-flex items-center gap-2 rounded-full bg-gold px-7 py-4 text-sm font-bold text-navy shadow-[0_20px_50px_-15px_rgba(253,184,19,0.6)] transition-all hover:bg-gold-hover hover:shadow-[0_25px_60px_-12px_rgba(253,184,19,0.7)] hover:translate-y-[-2px]"
+              className="group inline-flex items-center justify-center gap-2 rounded-full bg-gold px-6 sm:px-7 py-3.5 sm:py-4 text-sm font-bold text-navy shadow-[0_20px_50px_-15px_rgba(253,184,19,0.6)] transition-all hover:bg-gold-hover hover:shadow-[0_25px_60px_-12px_rgba(253,184,19,0.7)] hover:translate-y-[-2px]"
             >
-              {t("hero.cta1")}
+              <span>{t("hero.cta1")}</span>
               <ArrowUpRight className="h-4 w-4 rtl:rotate-[-90deg]" />
             </a>
             <a
               href="/#works"
-              className="group inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/5 px-7 py-4 text-sm font-semibold text-white backdrop-blur-sm transition-all hover:bg-white/10 hover:border-gold/40"
+              className="group inline-flex items-center justify-center gap-2 rounded-full border border-white/25 bg-white/5 px-6 sm:px-7 py-3.5 sm:py-4 text-sm font-semibold text-white backdrop-blur-sm transition-all hover:bg-white/10 hover:border-gold/40"
             >
-              {t("hero.cta2")}
+              <span>{t("hero.cta2")}</span>
             </a>
           </div>
         </Reveal>

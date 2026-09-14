@@ -18,19 +18,29 @@ export default function WhyChooseUs() {
               {t("why.title")}
             </h2>
           </Reveal>
+          <Reveal delay={160}>
+            <p className="mt-4 text-base sm:text-lg leading-relaxed text-navy/70">
+              {t("why.subtitle")}
+            </p>
+          </Reveal>
         </div>
 
-        <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {items.map(([title, desc], i) => {
             const Icon = whyIcons[i % whyIcons.length];
             return (
-              <Reveal key={title} delay={(i % 4) * 80}>
-                <div className="group relative h-full rounded-2xl bg-gradient-to-br from-surface to-white p-6 ring-1 ring-navy/5 transition-all hover:ring-navy/20">
-                  <div className="grid h-11 w-11 place-items-center rounded-xl bg-orange/10 text-orange transition-all group-hover:bg-orange group-hover:text-white">
-                    <Icon className="h-5 w-5" />
+              <Reveal key={title} delay={(i % 3) * 80} className="h-full">
+                <div className="group relative flex h-full flex-col justify-between rounded-2xl border border-navy/10 bg-gradient-to-br from-surface to-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-orange/40 hover:shadow-lg">
+                  <div>
+                    <div className="flex items-center justify-between">
+                      <div className="grid h-12 w-12 place-items-center rounded-xl bg-orange/10 text-orange transition-all duration-300 group-hover:bg-orange group-hover:text-white group-hover:scale-105">
+                        <Icon className="h-5 w-5" />
+                      </div>
+                      <span className="font-mono text-xs font-bold text-navy/20">0{i + 1}</span>
+                    </div>
+                    <h3 className="mt-4 font-display text-lg font-bold text-navy group-hover:text-orange transition-colors">{title}</h3>
+                    <p className="mt-2 text-sm leading-relaxed text-navy/60">{desc}</p>
                   </div>
-                  <h3 className="mt-4 font-display text-base font-bold text-navy">{title}</h3>
-                  <p className="mt-2 text-sm text-navy/60">{desc}</p>
                 </div>
               </Reveal>
             );

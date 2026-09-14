@@ -53,13 +53,12 @@ export const portfolioSpans = [
 ];
 
 export const serviceIcons = [
-  Palette, Type, Home, Sun, Lightbulb, Car, Printer, FileText,
-  Layers, Building2, Square, PaintBucket, Presentation, Gift,
-  Sparkles, Compass, ShieldAlert, Wrench,
+  Printer, Building2, Type, Car, Layers, Zap, Palette,
+  Sparkles, PaintBucket, Presentation, Gift, Compass, ShieldAlert, Wrench,
 ];
 
 export const whyIcons = [
-  Sparkles, Users, Zap, Rocket, Cpu, Sliders, BadgeDollarSign, HeartHandshake,
+  Sparkles, Palette, Zap, Users, ShieldAlert, HeartHandshake,
 ];
 
 export const clientBrands = [

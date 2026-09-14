@@ -18,9 +18,9 @@ export default function Footer() {
   return (
     <footer className="bg-[#F7F5EF] py-12 lg:py-14 text-[#062D4F]">
       <div className="mx-auto max-w-7xl px-6 lg:px-10">
-        <div className="grid grid-cols-2 gap-10 lg:grid-cols-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-10">
           {/* Brand */}
-          <div className="col-span-2 lg:col-span-1">
+          <div className="col-span-1 sm:col-span-2 lg:col-span-1">
             <div className="flex items-center">
               <img
                 src="/logo/Suharlogo.webp"
@@ -32,14 +32,20 @@ export default function Footer() {
             <p className="mt-5 text-sm">{t("footer.tagline")}</p>
 
             <div className="mt-6 flex gap-3">
-              {[Facebook, Instagram, Linkedin].map((I, i) => (
+              {[
+                { Icon: Instagram, href: "https://www.instagram.com/baharalsuwaihara/", label: "Instagram" },
+                { Icon: Facebook, href: "#", label: "Facebook" },
+                { Icon: Linkedin, href: "#", label: "LinkedIn" },
+              ].map(({ Icon, href, label }) => (
                 <a
-                  key={i}
-                  href="#"
-                  className="grid h-9 w-9 place-items-center rounded-full border border-white/15 transition-all hover:border-orange hover:bg-orange hover:text-white"
-                  aria-label="Social"
+                  key={label}
+                  href={href}
+                  target={href.startsWith("http") ? "_blank" : undefined}
+                  rel={href.startsWith("http") ? "noopener noreferrer" : undefined}
+                  className="grid h-9 w-9 place-items-center rounded-full border border-black/15 text-[#062D4F] transition-all hover:border-orange hover:bg-orange hover:text-white"
+                  aria-label={label}
                 >
-                  <I className="h-4 w-4" />
+                  <Icon className="h-4 w-4" />
                 </a>
               ))}
             </div>
@@ -47,7 +53,7 @@ export default function Footer() {
 
           {/* Links */}
           <div>
-            <div className="text-xs font-semibold uppercase tracking-[0.22em] text-white/40">
+            <div className="text-xs font-bold uppercase tracking-[0.22em] text-[#062D4F]/60">
               {t("footer.links")}
             </div>
 
@@ -73,7 +79,7 @@ export default function Footer() {
 
           {/* Services */}
           <div>
-            <div className="text-xs font-semibold uppercase tracking-[0.22em] text-white/40">
+            <div className="text-xs font-bold uppercase tracking-[0.22em] text-[#062D4F]/60">
               {t("footer.services")}
             </div>
 
@@ -81,7 +87,7 @@ export default function Footer() {
               {services.map(([s]: [string, string]) => (
                 <li key={s}>
                   <a
-                    href="#services"
+                    href="/#services"
                     className="transition-colors hover:text-orange"
                   >
                     {s}
@@ -93,7 +99,7 @@ export default function Footer() {
 
           {/* Contact */}
           <div>
-            <div className="text-xs font-semibold uppercase tracking-[0.22em] text-white/40">
+            <div className="text-xs font-bold uppercase tracking-[0.22em] text-[#062D4F]/60">
               {t("footer.contact")}
             </div>
 
@@ -104,13 +110,17 @@ export default function Footer() {
               </li>
 
               <li className="flex items-center gap-2">
-                <Phone className="h-4 w-4 text-orange" />
-                +968 2456 7890
+                <Phone className="h-4 w-4 text-orange shrink-0" />
+                <a href="tel:+96891909331" className="transition-colors hover:text-orange">
+                  +968 9190 9331
+                </a>
               </li>
 
               <li className="flex items-center gap-2">
-                <Mail className="h-4 w-4 text-orange" />
-                hello@suhar.om
+                <Mail className="h-4 w-4 text-orange shrink-0" />
+                <a href="mailto:baharalsuwaihara@gmail.com" className="break-all transition-colors hover:text-orange">
+                  baharalsuwaihara@gmail.com
+                </a>
               </li>
             </ul>
             <button
