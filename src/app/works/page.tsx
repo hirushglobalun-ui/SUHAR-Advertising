@@ -1,0 +1,136 @@
+"use client";
+
+import Link from "next/link";
+import { useState } from "react";
+import { ArrowUpRight } from "lucide-react";
+import Reveal from "@/components/common/Reveal";
+import { useLang, useT } from "@/lib/i18n";
+import { getImgSrc, portfolioImgs } from "@/lib/data";
+import { projectsData } from "@/lib/projects";
+import Header from "@/components/layout/Header";
+import Footer from "@/components/layout/Footer";
+
+export default function WorksPage() {
+  const { t, lang } = useLang();
+  const items = Array.isArray(useT("portfolio.items")) ? useT<[string, string, string][]>("portfolio.items") : [];
+  const cats = Array.isArray(useT("portfolio.cats")) ? useT<string[]>("portfolio.cats") : [];
+
+  const [active, setActive] = useState(0);
+
+  const filtered = items
+    .map((it, i) => ({ it, i }))
+    .filter(({ it }) => active === 0 || it[2] === cats[active]);
+
+  return (
+    <>
+      <Header />
+      <main>
+        <section className="bg-navy text-white py-14 lg:py-20">
+          <div className="mx-auto max-w-7xl px-6 lg:px-10">
+            {/* Back to Home */}
+            <div className="mb-6">
+              <Link href="/" className="inline-flex items-center gap-1 text-sm font-semibold text-white transition-colors hover:text-orange">
+                {lang === "ar" ? "← العودة إلى الرئيسية" : "← Back to Home"}
+              </Link>
+            </div>
+
+            {/* Header */}
+            <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+              <div className="max-w-2xl">
+                <Reveal>
+                  <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.22em] text-white/80">
+                    <span className="h-1.5 w-1.5 rounded-full bg-orange" />
+                    {t("portfolio.eyebrow")}
+                  </div>
+                </Reveal>
+                <Reveal delay={100}>
+                  <h2 className="mt-4 font-display text-4xl font-extrabold leading-tight sm:text-5xl">{t("portfolio.title")}</h2>
+                </Reveal>
+              </div>
+            </div>
+
+            {/* Categories */}
+            <Reveal delay={200}>
+              <div className="mt-8 flex flex-wrap gap-2">
+                {cats.map((c, i) => (
+                  <button
+                    key={c}
+                    onClick={() => setActive(i)}
+                    className={`rounded-full border px-3.5 py-1.5 text-[11px] font-semibold uppercase tracking-wider transition-all sm:px-4 sm:py-2 sm:text-xs ${
+                      active === i
+                        ? "border-orange bg-orange text-white shadow-md shadow-orange/30"
+                        : "border-white/15 text-white/70 hover:border-white/40 hover:text-white"
+                    }`}
+                  >
+                    {c}
+                  </button>
+                ))}
+              </div>
+            </Reveal>
+
+            {/* Portfolio Grid */}
+            <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              {filtered.map(({ it, i }) => {
+                const imgSrc = getImgSrc(portfolioImgs[i % portfolioImgs.length]);
+                const project = projectsData[i % projectsData.length];
+                const projectSlug = project?.slug || "al-fanar-tower";
+
+                return (
+                  <Reveal key={`${active}-${i}`} delay={(i % 3) * 80} className="h-full">
+                    <Link
+                      href={`/works/${projectSlug}`}
+                      className="group relative flex aspect-[4/3] w-full flex-col justify-between overflow-hidden rounded-2xl sm:rounded-3xl border border-white/10 bg-[#06243d] p-5 sm:p-6 text-left shadow-xl shadow-navy/40 transition-all duration-500 hover:-translate-y-1.5 hover:border-orange/60 hover:shadow-2xl hover:shadow-orange/15 focus:outline-none focus:ring-2 focus:ring-orange"
+                    >
+                      {/* Full-bleed Photo Background */}
+                      <img
+                        src={imgSrc}
+                        alt={it[0]}
+                        loading="lazy"
+                        className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+                      />
+
+                      {/* Multi-layered Cinematic Vignette */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#041525] via-[#041525]/60 to-transparent opacity-90 transition-opacity duration-500 group-hover:opacity-95" />
+                      <div className="absolute inset-0 bg-gradient-to-b from-[#041525]/50 via-transparent to-transparent opacity-70" />
+
+                      {/* Top Floating Badge & Action Indicator */}
+                      <div className="relative z-10 flex w-full items-center justify-between">
+                        <span className="inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-navy/70 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-orange shadow-sm backdrop-blur-md transition-colors duration-300 group-hover:border-orange/40 group-hover:bg-navy/90">
+                          <span className="h-1.5 w-1.5 rounded-full bg-orange animate-pulse" />
+                          {it[2]}
+                        </span>
+
+                        <div className="grid h-9 w-9 place-items-center rounded-full border border-white/20 bg-white/10 text-white backdrop-blur-md transition-all duration-300 group-hover:scale-110 group-hover:border-orange group-hover:bg-orange group-hover:text-white group-hover:shadow-md group-hover:shadow-orange/30">
+                          <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                        </div>
+                      </div>
+
+                      {/* Bottom Project Info */}
+                      <div className="relative z-10 mt-auto pt-6 text-left rtl:text-right">
+                        <h3 className="font-display text-lg sm:text-xl font-bold text-white transition-colors duration-300 group-hover:text-orange line-clamp-1">
+                          {it[0]}
+                        </h3>
+
+                        <p className="mt-1 text-xs sm:text-sm text-white/80 line-clamp-1 font-medium">
+                          {it[1]}
+                        </p>
+
+                        <div className="mt-3.5 flex items-center">
+                          <span className="inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-white/10 px-3.5 py-1 text-[11px] font-semibold text-white/90 backdrop-blur-sm transition-all duration-300 group-hover:border-orange group-hover:bg-orange group-hover:text-white">
+                            {lang === "ar" ? "عرض التفاصيل الكاملة" : "View Project Details"}
+                            <ArrowUpRight className="h-3 w-3 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                          </span>
+                        </div>
+                      </div>
+                    </Link>
+                  </Reveal>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+      </main>
+      <Footer />
+    </>
+  );
+}

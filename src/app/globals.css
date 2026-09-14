@@ -1,0 +1,176 @@
+@import "tailwindcss";
+@source "../";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --font-sans: "Inter", "Tajawal", system-ui, sans-serif;
+  --font-display: "Manrope", "Cairo", system-ui, sans-serif;
+  --font-arabic: "Tajawal", "Cairo", system-ui, sans-serif;
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-navy: var(--navy);
+  --color-navy-foreground: var(--navy-foreground);
+  --color-royal: var(--royal);
+  --color-orange: var(--orange);
+  --color-gold: var(--gold);
+  --color-gold-hover: var(--gold-hover);
+  --color-success: var(--success);
+  --color-surface: var(--surface);
+}
+
+:root {
+  --radius: 0.875rem;
+
+  /* SUHAR brand palette derived directly from Suharlogo.webp */
+  --navy: #002642;                       /* Deep SUHAR Logo Navy */
+  --navy-foreground: #FFFFFF;
+  --royal: #003865;                      /* Secondary Rich Navy */
+  --gold: #FDB813;                       /* SUHAR Logo Vibrant Gold/Yellow */
+  --gold-hover: #E5A200;                 /* Darker Gold Hover */
+  --orange: #FDB813;                     /* Logo Accent Yellow/Gold */
+  --success: oklch(0.72 0.17 162);       /* #10B981 */
+  --surface: oklch(0.985 0.005 240);     /* Light gray */
+
+  --background: oklch(1 0 0);
+  --foreground: #002642;
+  --card: oklch(1 0 0);
+  --card-foreground: #002642;
+  --popover: oklch(1 0 0);
+  --popover-foreground: #002642;
+  --primary: #002642;
+  --primary-foreground: #FFFFFF;
+  --secondary: oklch(0.968 0.007 247);
+  --secondary-foreground: #002642;
+  --muted: oklch(0.968 0.007 247);
+  --muted-foreground: oklch(0.45 0.03 260);
+  --accent: #FDB813;
+  --accent-foreground: #002642;
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: oklch(0.985 0.005 240);
+  --border: oklch(0.92 0.01 255);
+  --input: oklch(0.92 0.01 255);
+  --ring: #FDB813;
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    font-feature-settings: "cv11", "ss01";
+    -webkit-font-smoothing: antialiased;
+  }
+
+  html[dir="rtl"] body {
+    font-family: var(--font-arabic);
+  }
+
+  h1, h2, h3, h4, h5 {
+    font-family: var(--font-display);
+    letter-spacing: -0.02em;
+  }
+
+  html[dir="rtl"] h1,
+  html[dir="rtl"] h2,
+  html[dir="rtl"] h3,
+  html[dir="rtl"] h4,
+  html[dir="rtl"] h5 {
+    font-family: var(--font-arabic);
+    letter-spacing: 0;
+  }
+}
+
+@utility glass {
+  background: color-mix(in oklab, white 65%, transparent);
+  backdrop-filter: blur(20px) saturate(160%);
+  border: 1px solid color-mix(in oklab, white 40%, transparent);
+}
+
+@utility glass-dark {
+  background: color-mix(in oklab, var(--navy) 55%, transparent);
+  backdrop-filter: blur(24px) saturate(160%);
+  border: 1px solid color-mix(in oklab, white 10%, transparent);
+}
+
+@utility text-gradient {
+  background: linear-gradient(120deg, var(--navy), var(--royal) 60%, var(--orange));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+@utility grid-lines {
+  background-image:
+    linear-gradient(to right, color-mix(in oklab, var(--navy) 8%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in oklab, var(--navy) 8%, transparent) 1px, transparent 1px);
+  background-size: 64px 64px;
+}
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+@keyframes marquee-rtl {
+  from { transform: translateX(-50%); }
+  to { transform: translateX(0); }
+}
+@keyframes float-slow {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-24px) rotate(6deg); }
+}
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@utility animate-marquee {
+  animation: marquee 40s linear infinite;
+}
+@utility animate-float-slow {
+  animation: float-slow 9s ease-in-out infinite;
+}
+@utility animate-pulse-glow {
+  animation: pulse-glow 3s ease-in-out infinite;
+}
+@utility animate-fade-up {
+  animation: fade-up 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
