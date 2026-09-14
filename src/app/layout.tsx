@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   description:
     "SUHAR Advertising is a premium branding, signage, printing and fabrication studio serving leading brands across the Sultanate of Oman.",
   openGraph: {
-    title: "SUHAR Advertising — Branding & Signage in Oman",
+    title: "SUHAR Advertising ",
     description:
       "Corporate branding, LED signage, digital printing and creative fabrication — bringing brands to life across Oman.",
     type: "website",

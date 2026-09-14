@@ -98,6 +98,7 @@ export const dict = {
         ["Nafith Logistics", "Fleet Vehicle Wrap", "Vehicle"],
         ["Gulf Innovation Expo", "Exhibition Stand", "Exhibition"],
         ["Serene Interiors", "Interior Wall Branding", "Branding"],
+        ["Suhar Corporate Print", "Large Format & Offset Print", "Printing"],
       ] as [string, string, string][],
     },
     process: {
@@ -269,6 +270,7 @@ export const dict = {
         ["نافذ للوجستيات", "هوية أسطول المركبات", "المركبات"],
         ["معرض الخليج للابتكار", "ستاند معرض", "المعارض"],
         ["سيرين للتصميم الداخلي", "هوية جدارية داخلية", "الهوية"],
+        ["مطبوعات شهار المؤسسية", "طباعة أوفست وطباعة واسعة النطاق", "الطباعة"],
       ] as [string, string, string][],
     },
     process: {

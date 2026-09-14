@@ -53,11 +53,11 @@ export default function Footer() {
 
             <ul className="mt-4 space-y-2 text-sm">
               {[
-                ["#services", t("nav.services")],
-                ["/works", t("nav.portfolio")],
-                ["#about", t("nav.about")],
-                ["#process", t("nav.process")],
-                ["#contact", t("nav.contact")],
+                ["/#services", t("nav.services")],
+                ["/#works", t("nav.portfolio")],
+                ["/#about", t("nav.about")],
+                ["/#process", t("nav.process")],
+                ["/#contact", t("nav.contact")],
               ].map(([h, l]) => (
                 <li key={h}>
                   <a

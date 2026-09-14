@@ -70,7 +70,7 @@ export default function Hero() {
               <ArrowUpRight className="h-4 w-4 rtl:rotate-[-90deg]" />
             </a>
             <a
-              href="/works"
+              href="/#works"
               className="group inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/5 px-7 py-4 text-sm font-semibold text-white backdrop-blur-sm transition-all hover:bg-white/10 hover:border-gold/40"
             >
               {t("hero.cta2")}
