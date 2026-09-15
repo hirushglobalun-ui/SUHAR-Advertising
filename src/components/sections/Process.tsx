@@ -11,7 +11,7 @@ import { useLang, useT } from "@/lib/i18n";
 gsap.registerPlugin(ScrollTrigger);
 
 export default function Process() {
-  const { t } = useLang();
+  const { t, lang } = useLang();
   const steps = useT<[string, string][]>("process.steps");
 
   const [scrollProgress, setScrollProgress] = useState(0);
@@ -19,7 +19,6 @@ export default function Process() {
 
   const sectionRef = useRef<HTMLElement | null>(null);
   const lineRef = useRef<HTMLDivElement | null>(null);
-  const stepRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   useEffect(() => {
     const section = sectionRef.current;
@@ -27,84 +26,109 @@ export default function Process() {
 
     if (!section) return;
 
+    const isArabic = lang === "ar";
+
     const prefersReduced = window.matchMedia(
       "(prefers-reduced-motion: reduce)"
     ).matches;
 
     const ctx = gsap.context(() => {
+      /* --------------------------------
+         Initial line state
+      -------------------------------- */
       if (line) {
         gsap.set(line, {
           scaleX: 0,
-          transformOrigin: "left center",
+          transformOrigin: isArabic
+            ? "right center"
+            : "left center",
         });
       }
 
+      /* --------------------------------
+         Reduced motion
+      -------------------------------- */
       if (prefersReduced) {
+        setReducedMotion(true);
+        setScrollProgress(1);
+
         if (line) {
           gsap.set(line, {
             scaleX: 1,
           });
         }
 
-        setReducedMotion(true);
-        setScrollProgress(1);
-
         return;
       }
 
-      // Main scroll progress
-      gsap.to(
-        {},
-        {
-          scrollTrigger: {
-            trigger: section,
-            start: "top 75%",
-            end: "bottom 70%",
-            scrub: 12,
-            onUpdate: (self) => {
-              setScrollProgress(self.progress);
-            },
-          },
-        }
-      );
+      setReducedMotion(false);
 
-      // Desktop timeline line animation
+      /* --------------------------------
+         Main scroll animation timeline
+      -------------------------------- */
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: section,
+          start: "top 80px",
+          end: "+=1600",
+          scrub: 1,
+          pin: true,
+          pinSpacing: true,
+          invalidateOnRefresh: true,
+
+          onUpdate: (self) => {
+            const progress = Math.min(
+              1,
+              Math.max(0, self.progress)
+            );
+
+            setScrollProgress(progress);
+          },
+        },
+      });
+
       if (line) {
-        const lineTl = gsap.timeline({
-          scrollTrigger: {
-            trigger: section,
-            start: "top 75%",
-            end: "bottom 70%",
-            scrub: 12,
-          },
-        });
-
-        lineTl.to(
+        tl.to(
           line,
           {
             scaleX: 1,
             ease: "none",
-            duration: 1,
           },
           0
         );
       }
     }, section);
 
-    return () => ctx.revert();
-  }, []);
+    /* --------------------------------
+       Refresh after language/layout change
+    -------------------------------- */
+    const refreshTimer = window.setTimeout(() => {
+      ScrollTrigger.refresh();
+    }, 150);
+
+    return () => {
+      window.clearTimeout(refreshTimer);
+      ctx.revert();
+    };
+  }, [lang]);
 
   return (
     <section
       ref={sectionRef}
       id="process"
       className="relative overflow-hidden bg-surface py-10 sm:py-14 lg:py-20"
+      dir={lang === "ar" ? "rtl" : "ltr"}
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-10">
-        {/* Header */}
+
+        {/* ==============================
+            HEADER
+        ============================== */}
         <div className="max-w-3xl">
           <Reveal>
-            <SectionLabel>{t("process.eyebrow")}</SectionLabel>
+            <SectionLabel>
+              {t("process.eyebrow")}
+            </SectionLabel>
           </Reveal>
 
           <Reveal delay={100}>
@@ -114,48 +138,129 @@ export default function Process() {
           </Reveal>
         </div>
 
-        {/* Mobile Vertical Timeline */}
+        {/* ==============================
+            MOBILE PROCESS
+        ============================== */}
         <div className="relative mt-8 lg:hidden">
-          {/* Vertical Line */}
-          <div className="absolute bottom-4 left-6 rtl:left-auto rtl:right-6 top-4 w-0.5 bg-navy/15">
+
+          {/* Vertical line */}
+          <div
+            className="
+              absolute
+              bottom-4
+              top-4
+              left-6
+              w-0.5
+              bg-navy/15
+              rtl:left-auto
+              rtl:right-6
+            "
+          >
             <div
-              className="h-full w-full origin-top rounded-full bg-gradient-to-b from-navy via-royal to-gold transition-transform duration-1000 ease-out"
+              className="
+                h-full
+                w-full
+                origin-top
+                rounded-full
+                bg-gradient-to-b
+                from-navy
+                via-royal
+                to-gold
+                transition-transform
+                duration-500
+                ease-out
+              "
               style={{
-                transform: `scaleY(${reducedMotion ? 1 : scrollProgress})`,
+                transform: `scaleY(${reducedMotion ? 1 : scrollProgress
+                  })`,
               }}
             />
           </div>
 
+          {/* Steps */}
           <div className="flex flex-col gap-4">
             {steps.map(([title, desc], i) => {
+              const threshold =
+                i / Math.max(steps.length - 1, 1);
+
               const isActive =
                 reducedMotion ||
-                scrollProgress >= i / Math.max(steps.length - 1, 1);
+                scrollProgress >= threshold;
 
               return (
                 <div
                   key={title}
-                  className={`relative flex items-start gap-4 pl-16 rtl:pl-0 rtl:pr-16 transition-all duration-1000 ease-out ${isActive
+                  className={`
+                    relative
+                    flex
+                    items-start
+                    gap-4
+                    pl-16
+                    rtl:pl-0
+                    rtl:pr-16
+                    transition-all
+                    duration-500
+                    ease-out
+                    ${isActive
                       ? "translate-y-0 opacity-100"
                       : "translate-y-3 opacity-40"
-                    }`}
+                    }
+                  `}
                 >
-                  {/* Badge */}
+                  {/* Number */}
                   <div
-                    className={`absolute left-0 rtl:left-auto rtl:right-0 top-0.5 z-10 grid h-12 w-12 place-items-center rounded-2xl bg-surface ring-2 ring-[#102E50] shadow-md transition-all duration-1000 ease-out ${isActive ? "scale-105 shadow-gold/40" : ""
-                      }`}
+                    className={`
+                      absolute
+                      left-0
+                      top-0.5
+                      z-10
+                      grid
+                      h-12
+                      w-12
+                      place-items-center
+                      rounded-2xl
+                      bg-surface
+                      ring-2
+                      ring-[#102E50]
+                      shadow-md
+                      rtl:left-auto
+                      rtl:right-0
+                      transition-all
+                      duration-500
+                      ease-out
+                      ${isActive
+                        ? "scale-105 shadow-gold/40"
+                        : ""
+                      }
+                    `}
                   >
-                    <span className="font-display text-sm font-extrabold text-gold">
+                    <span
+                      dir="ltr"
+                      className="font-display text-sm font-extrabold text-gold"
+                    >
                       0{i + 1}
                     </span>
                   </div>
 
-                  {/* Content Card */}
+                  {/* Content */}
                   <div
-                    className={`flex-1 rounded-2xl border border-slate-200/80 bg-white/90 p-4 shadow-sm backdrop-blur-sm transition-all duration-1000 ease-out ${isActive
+                    className={`
+                      flex-1
+                      rounded-2xl
+                      border
+                      border-slate-200/80
+                      bg-white/90
+                      p-4
+                      shadow-sm
+                      backdrop-blur-sm
+                      transition-all
+                      duration-500
+                      ease-out
+                      ${isActive
                         ? "translate-x-0 opacity-100"
-                        : "translate-x-3 rtl:-translate-x-3 opacity-60"
-                      }`}
+                        : "translate-x-3 opacity-60 rtl:-translate-x-3"
+                      }
+                    `}
                   >
                     <h3 className="font-display text-base font-bold text-navy">
                       {title}
@@ -171,45 +276,89 @@ export default function Process() {
           </div>
         </div>
 
-        {/* Desktop Horizontal Timeline */}
-        <div className="relative mt-12 hidden lg:block">
-          {/* Desktop Line */}
+        {/* ==============================
+            DESKTOP PROCESS
+        ============================== */}
+        <div
+          className="relative mt-12 hidden lg:block"
+          dir={lang === "ar" ? "rtl" : "ltr"}
+        >
+          {/* Horizontal background line */}
           <div className="absolute inset-x-6 top-12 h-0.5 bg-navy/15">
             <div
               ref={lineRef}
-              className="h-full origin-left rtl:origin-right rounded-full bg-gradient-to-r rtl:bg-gradient-to-l from-navy via-royal to-gold"
+              className="
+                h-full
+                rounded-full
+                bg-gradient-to-r
+                from-navy
+                via-royal
+                to-gold
+                rtl:bg-gradient-to-l
+              "
             />
           </div>
 
-          {/* Steps Grid */}
+          {/* Six steps */}
           <div className="relative z-10 grid grid-cols-6 gap-6">
             {steps.map(([title, desc], i) => {
+              const threshold =
+                i / Math.max(steps.length - 1, 1);
+
               const isActive =
                 reducedMotion ||
-                scrollProgress >= i / Math.max(steps.length - 1, 1);
+                scrollProgress >= threshold;
 
               return (
                 <div
                   key={title}
-                  ref={(el) => {
-                    stepRefs.current[i] = el;
-                  }}
-                  className={`relative flex flex-col items-start transition-all duration-1000 ease-out ${isActive
+                  className={`
+                    relative
+                    flex
+                    flex-col
+                    items-start
+                    transition-all
+                    duration-500
+                    ease-out
+                    ${isActive
                       ? "translate-y-0 scale-100 opacity-100"
                       : "translate-y-3 scale-95 opacity-0"
-                    }`}
+                    }
+                  `}
                 >
-                  {/* Badge */}
+                  {/* Number card */}
                   <div className="relative mb-5">
                     {/* Glow */}
                     <div className="absolute inset-0 rounded-3xl bg-gold/20 blur-md" />
 
-                    {/* Number Box */}
+                    {/* Number */}
                     <div
-                      className={`relative z-10 grid h-24 w-24 place-items-center rounded-3xl bg-surface shadow-lg ring-2 ring-[#102E50] shadow-navy/15 transition-all duration-1000 ease-out ${isActive ? "scale-110 shadow-gold/40" : ""
-                        }`}
+                      className={`
+                        relative
+                        z-10
+                        grid
+                        h-24
+                        w-24
+                        place-items-center
+                        rounded-3xl
+                        bg-surface
+                        shadow-lg
+                        ring-2
+                        ring-[#102E50]
+                        shadow-navy/15
+                        transition-all
+                        duration-500
+                        ease-out
+                        ${isActive
+                          ? "scale-110 shadow-gold/40"
+                          : ""
+                        }
+                      `}
                     >
-                      <span className="font-display text-3xl font-extrabold text-gold">
+                      <span
+                        dir="ltr"
+                        className="font-display text-3xl font-extrabold text-gold"
+                      >
                         0{i + 1}
                       </span>
                     </div>
@@ -229,7 +378,7 @@ export default function Process() {
             })}
           </div>
         </div>
-      </div>
+      </div> 
     </section>
   );
 }
