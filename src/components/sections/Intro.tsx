@@ -80,7 +80,13 @@ export default function Intro() {
                 </div>
                 <div>
                   <div className="font-display text-2xl font-extrabold text-navy">1996</div>
-                  <div className="text-xs uppercase tracking-widest text-navy/60">{lang === "ar" ? "تأسست · 28+ عاماً" : "Established · 28+ Yrs"}</div>
+                  <div className="text-xs uppercase tracking-widest text-navy/60">
+                    {lang === "ar" ? (
+                      <>تأسست · <span dir="ltr">28+</span> عاماً</>
+                    ) : (
+                      "Established · 28+ Yrs"
+                    )}
+                  </div>
                 </div>
               </div>
             </div>

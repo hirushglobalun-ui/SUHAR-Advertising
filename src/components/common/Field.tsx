@@ -45,7 +45,9 @@ export default function Field({
         inputMode={name === "phone" ? "numeric" : undefined}
         pattern={name === "phone" ? "[0-9]{10}" : undefined}
         onInput={handleInput}
-        className="w-full rounded-xl border border-white/15 bg-white/5 px-4 py-3 text-base sm:text-sm text-white outline-none transition-all placeholder:text-white/30 focus:border-orange/60"
+        dir={name === "phone" ? "ltr" : undefined}
+        className={`w-full rounded-xl border border-white/15 bg-white/5 px-4 py-3 text-base sm:text-sm text-white outline-none transition-all placeholder:text-white/30 focus:border-orange/60 ${name === "phone" ? "text-left" : ""
+          }`}
       />
     </div>
   );
