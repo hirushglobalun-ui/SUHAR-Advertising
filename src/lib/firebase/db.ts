@@ -329,6 +329,10 @@ interface CMSStoreData {
   testimonials: CMSTestimonial[];
   clients: CMSClientLogo[];
   settings?: CMSSettings;
+  deleted_category_ids?: string[];
+  deleted_project_ids?: string[];
+  deleted_testimonial_ids?: string[];
+  deleted_client_ids?: string[];
 }
 
 const DATA_FILE_PATH = path.join(process.cwd(), "data", "cms-store.json");
@@ -382,25 +386,38 @@ function saveLocalStore(store: CMSStoreData) {
 // PROJECTS / WORKS API
 // -------------------------------------------------------------
 export async function getCMSProjects(options?: { onlyPublished?: boolean; categorySlug?: string }): Promise<CMSProject[]> {
+  const store = getLocalStore();
+  const deletedSet = new Set(store.deleted_project_ids || []);
+  const map = new Map<string, CMSProject>();
+
+  // 1. Local store items
+  for (const p of store.projects) {
+    if (p && p.id && !deletedSet.has(p.id) && !deletedSet.has(p.slug)) {
+      map.set(p.id, p);
+    }
+  }
+
+  // 2. Merge with Firestore
   if (isFirebaseConfigured() && firestore) {
     try {
       const q = query(collection(firestore, "projects"), orderBy("display_order", "asc"));
       const snapshot = await getDocs(q);
       if (!snapshot.empty) {
-        let list = snapshot.docs.map((d) => ({ id: d.id, ...d.data() } as CMSProject));
-        if (options?.onlyPublished) list = list.filter((p) => p.is_published);
-        if (options?.categorySlug && options.categorySlug !== "All" && options.categorySlug !== "الكل") {
-          list = list.filter((p) => p.category_slug === options.categorySlug);
+        for (const doc of snapshot.docs) {
+          const remoteP = { id: doc.id, ...doc.data() } as CMSProject;
+          if (!deletedSet.has(remoteP.id) && !deletedSet.has(remoteP.slug)) {
+            if (!map.has(remoteP.id)) {
+              map.set(remoteP.id, remoteP);
+            }
+          }
         }
-        return list;
       }
     } catch (e) {
       console.warn("Firestore query failed, using local store:", e);
     }
   }
 
-  const store = getLocalStore();
-  let list = [...store.projects].sort((a, b) => a.display_order - b.display_order);
+  let list = Array.from(map.values()).sort((a, b) => (a.display_order ?? 0) - (b.display_order ?? 0));
   if (options?.onlyPublished) list = list.filter((p) => p.is_published);
   if (options?.categorySlug && options.categorySlug !== "All" && options.categorySlug !== "الكل") {
     list = list.filter((p) => p.category_slug === options.categorySlug);
@@ -538,12 +555,8 @@ export async function saveCMSProject(data: Partial<CMSProject> & { id?: string }
     updated_at: now,
   };
 
-  if (isFirebaseConfigured() && firestore) {
-    try {
-      await setDoc(doc(firestore, "projects", id), project, { merge: true });
-    } catch (err) {
-      console.warn("Firestore save error:", err);
-    }
+  if (store.deleted_project_ids) {
+    store.deleted_project_ids = store.deleted_project_ids.filter((item) => item !== id && item !== slug);
   }
 
   const existingIdx = store.projects.findIndex((p) => p.id === id);
@@ -554,10 +567,26 @@ export async function saveCMSProject(data: Partial<CMSProject> & { id?: string }
   }
   saveLocalStore(store);
 
+  if (isFirebaseConfigured() && firestore) {
+    try {
+      await setDoc(doc(firestore, "projects", id), project, { merge: true });
+    } catch (err) {
+      console.warn("Firestore save error:", err);
+    }
+  }
+
   return project;
 }
 
 export async function deleteCMSProject(id: string): Promise<boolean> {
+  const store = getLocalStore();
+  if (!store.deleted_project_ids) store.deleted_project_ids = [];
+  if (!store.deleted_project_ids.includes(id)) {
+    store.deleted_project_ids.push(id);
+  }
+  store.projects = store.projects.filter((p) => p.id !== id && p.slug !== id);
+  saveLocalStore(store);
+
   if (isFirebaseConfigured() && firestore) {
     try {
       await deleteDoc(doc(firestore, "projects", id));
@@ -566,48 +595,93 @@ export async function deleteCMSProject(id: string): Promise<boolean> {
     }
   }
 
-  const store = getLocalStore();
-  store.projects = store.projects.filter((p) => p.id !== id);
-  saveLocalStore(store);
   return true;
 }
 
 // -------------------------------------------------------------
+// -------------------------------------------------------------
 // CATEGORIES API
 // -------------------------------------------------------------
 export async function getCMSCategories(): Promise<Category[]> {
+  const store = getLocalStore();
+  const deletedSet = new Set(store.deleted_category_ids || []);
+  const map = new Map<string, Category>();
+
+  // 1. Populate with local store categories (includes newly added, edited categories)
+  for (const c of store.categories) {
+    if (c && c.id && !deletedSet.has(c.id) && !deletedSet.has(c.slug)) {
+      map.set(c.id, c);
+    }
+  }
+
+  // 2. Merge with remote Firestore categories
   if (isFirebaseConfigured() && firestore) {
     try {
       const q = query(collection(firestore, "categories"), orderBy("display_order", "asc"));
       const snapshot = await getDocs(q);
       if (!snapshot.empty) {
-        return snapshot.docs.map((d) => ({ id: d.id, ...d.data() } as Category));
+        for (const d of snapshot.docs) {
+          const remoteCat = { id: d.id, ...d.data() } as Category;
+          if (!deletedSet.has(remoteCat.id) && !deletedSet.has(remoteCat.slug)) {
+            // Local store takes precedence if already present; otherwise add from remote
+            if (!map.has(remoteCat.id)) {
+              map.set(remoteCat.id, remoteCat);
+            }
+          }
+        }
       }
     } catch (err) {
       console.warn("Firestore categories error:", err);
     }
   }
 
-  const store = getLocalStore();
-  return store.categories.sort((a, b) => a.display_order - b.display_order);
+  return Array.from(map.values()).sort((a, b) => (a.display_order ?? 0) - (b.display_order ?? 0));
 }
 
 export async function saveCMSCategory(data: Partial<Category> & { id?: string }): Promise<Category> {
   const store = getLocalStore();
   const id = data.id || `cat-${Date.now()}`;
-  const name_en = data.name_en?.trim() || "New Category";
-  const name_ar = data.name_ar?.trim() && data.name_ar !== "تصنيف جديد"
-    ? data.name_ar
-    : await translateEnglishToArabic(name_en);
-  const slug = data.slug || (name_en ? name_en.trim() : `category-${id}`);
+  const existing = store.categories.find((c) => c.id === id);
+  const name_en = data.name_en?.trim() || existing?.name_en || "New Category";
+  
+  let name_ar = data.name_ar?.trim();
+  if (!name_ar || name_ar === "تصنيف جديد") {
+    if (existing?.name_ar && (!data.name_en || data.name_en === existing.name_en)) {
+      name_ar = existing.name_ar;
+    } else {
+      name_ar = await translateEnglishToArabic(name_en);
+    }
+  }
+
+  const slug = data.slug?.trim() || existing?.slug || (name_en ? name_en.trim() : `category-${id}`);
 
   const category: Category = {
     id,
     slug,
     name_en,
     name_ar,
-    display_order: data.display_order || (store.categories.length + 1),
+    display_order: data.display_order ?? existing?.display_order ?? (store.categories.length + 1),
   };
+
+  // If slug was updated, update any project references so projects don't lose their category
+  if (existing && existing.slug && existing.slug !== slug) {
+    store.projects.forEach((p) => {
+      if (p.category_slug === existing.slug || p.category === existing.slug || p.category === existing.id) {
+        p.category_slug = slug;
+        p.category = slug;
+      }
+    });
+  }
+
+  // Clear from deleted category tracking if restored or re-created
+  if (store.deleted_category_ids) {
+    store.deleted_category_ids = store.deleted_category_ids.filter((item) => item !== id && item !== slug);
+  }
+
+  const idx = store.categories.findIndex((c) => c.id === id);
+  if (idx >= 0) store.categories[idx] = category;
+  else store.categories.push(category);
+  saveLocalStore(store);
 
   if (isFirebaseConfigured() && firestore) {
     try {
@@ -617,15 +691,18 @@ export async function saveCMSCategory(data: Partial<Category> & { id?: string })
     }
   }
 
-  const idx = store.categories.findIndex((c) => c.id === id);
-  if (idx >= 0) store.categories[idx] = category;
-  else store.categories.push(category);
-  saveLocalStore(store);
-
   return category;
 }
 
 export async function deleteCMSCategory(id: string): Promise<boolean> {
+  const store = getLocalStore();
+  if (!store.deleted_category_ids) store.deleted_category_ids = [];
+  if (!store.deleted_category_ids.includes(id)) {
+    store.deleted_category_ids.push(id);
+  }
+  store.categories = store.categories.filter((c) => c.id !== id && c.slug !== id);
+  saveLocalStore(store);
+
   if (isFirebaseConfigured() && firestore) {
     try {
       await deleteDoc(doc(firestore, "categories", id));
@@ -633,9 +710,6 @@ export async function deleteCMSCategory(id: string): Promise<boolean> {
       console.warn("Firestore delete category error:", e);
     }
   }
-  const store = getLocalStore();
-  store.categories = store.categories.filter((c) => c.id !== id);
-  saveLocalStore(store);
   return true;
 }
 
@@ -682,26 +756,39 @@ export async function saveCMSSettings(data: Partial<CMSSettings>): Promise<CMSSe
 // TESTIMONIALS API
 // -------------------------------------------------------------
 export async function getCMSTestimonials(onlyPublished = false, limitCount?: number): Promise<CMSTestimonial[]> {
-  let list: CMSTestimonial[] = [];
+  const store = getLocalStore();
+  const deletedSet = new Set(store.deleted_testimonial_ids || []);
+  const map = new Map<string, CMSTestimonial>();
 
+  // 1. Local store items (authoritative for edits/additions)
+  for (const t of store.testimonials) {
+    if (t && t.id && !deletedSet.has(t.id)) {
+      map.set(t.id, t);
+    }
+  }
+
+  // 2. Merge with Firestore
   if (isFirebaseConfigured() && firestore) {
     try {
       const q = query(collection(firestore, "testimonials"), orderBy("display_order", "asc"));
       const snapshot = await getDocs(q);
       if (!snapshot.empty) {
-        list = snapshot.docs.map((d) => ({ id: d.id, ...d.data() } as CMSTestimonial));
-        if (onlyPublished) list = list.filter((t) => t.is_published);
+        for (const doc of snapshot.docs) {
+          const remoteT = { id: doc.id, ...doc.data() } as CMSTestimonial;
+          if (!deletedSet.has(remoteT.id)) {
+            if (!map.has(remoteT.id)) {
+              map.set(remoteT.id, remoteT);
+            }
+          }
+        }
       }
     } catch (err) {
       console.warn("Firestore testimonials error:", err);
     }
   }
 
-  if (list.length === 0) {
-    const store = getLocalStore();
-    list = [...store.testimonials];
-    if (onlyPublished) list = list.filter((t) => t.is_published);
-  }
+  let list = Array.from(map.values());
+  if (onlyPublished) list = list.filter((t) => t.is_published);
 
   // Consistent deterministic sort by display_order, then id
   list.sort((a, b) => {
@@ -770,6 +857,15 @@ export async function saveCMSTestimonial(data: Partial<CMSTestimonial> & { id?: 
     updated_at: now,
   };
 
+  if (store.deleted_testimonial_ids) {
+    store.deleted_testimonial_ids = store.deleted_testimonial_ids.filter((item) => item !== id);
+  }
+
+  const idx = store.testimonials.findIndex((t) => t.id === id);
+  if (idx >= 0) store.testimonials[idx] = testimonial;
+  else store.testimonials.push(testimonial);
+  saveLocalStore(store);
+
   if (isFirebaseConfigured() && firestore) {
     try {
       await setDoc(doc(firestore, "testimonials", id), testimonial, { merge: true });
@@ -778,15 +874,18 @@ export async function saveCMSTestimonial(data: Partial<CMSTestimonial> & { id?: 
     }
   }
 
-  const idx = store.testimonials.findIndex((t) => t.id === id);
-  if (idx >= 0) store.testimonials[idx] = testimonial;
-  else store.testimonials.push(testimonial);
-  saveLocalStore(store);
-
   return testimonial;
 }
 
 export async function deleteCMSTestimonial(id: string): Promise<boolean> {
+  const store = getLocalStore();
+  if (!store.deleted_testimonial_ids) store.deleted_testimonial_ids = [];
+  if (!store.deleted_testimonial_ids.includes(id)) {
+    store.deleted_testimonial_ids.push(id);
+  }
+  store.testimonials = store.testimonials.filter((t) => t.id !== id);
+  saveLocalStore(store);
+
   if (isFirebaseConfigured() && firestore) {
     try {
       await deleteDoc(doc(firestore, "testimonials", id));
@@ -794,9 +893,7 @@ export async function deleteCMSTestimonial(id: string): Promise<boolean> {
       console.warn("Firestore delete testimonial error:", e);
     }
   }
-  const store = getLocalStore();
-  store.testimonials = store.testimonials.filter((t) => t.id !== id);
-  saveLocalStore(store);
+
   return true;
 }
 
@@ -804,22 +901,38 @@ export async function deleteCMSTestimonial(id: string): Promise<boolean> {
 // CLIENT LOGOS API
 // -------------------------------------------------------------
 export async function getCMSClients(onlyActive = false): Promise<CMSClientLogo[]> {
+  const store = getLocalStore();
+  const deletedSet = new Set(store.deleted_client_ids || []);
+  const map = new Map<string, CMSClientLogo>();
+
+  // 1. Local store items
+  for (const c of store.clients) {
+    if (c && c.id && !deletedSet.has(c.id)) {
+      map.set(c.id, c);
+    }
+  }
+
+  // 2. Merge with Firestore
   if (isFirebaseConfigured() && firestore) {
     try {
       const q = query(collection(firestore, "clients"), orderBy("display_order", "asc"));
       const snapshot = await getDocs(q);
       if (!snapshot.empty) {
-        let list = snapshot.docs.map((d) => ({ id: d.id, ...d.data() } as CMSClientLogo));
-        if (onlyActive) list = list.filter((c) => c.is_active);
-        return list;
+        for (const doc of snapshot.docs) {
+          const remoteC = { id: doc.id, ...doc.data() } as CMSClientLogo;
+          if (!deletedSet.has(remoteC.id)) {
+            if (!map.has(remoteC.id)) {
+              map.set(remoteC.id, remoteC);
+            }
+          }
+        }
       }
     } catch (err) {
       console.warn("Firestore clients error:", err);
     }
   }
 
-  const store = getLocalStore();
-  let list = [...store.clients].sort((a, b) => a.display_order - b.display_order);
+  let list = Array.from(map.values()).sort((a, b) => (a.display_order ?? 0) - (b.display_order ?? 0));
   if (onlyActive) list = list.filter((c) => c.is_active);
   return list;
 }
@@ -845,6 +958,15 @@ export async function saveCMSClient(data: Partial<CMSClientLogo> & { id?: string
     updated_at: now,
   };
 
+  if (store.deleted_client_ids) {
+    store.deleted_client_ids = store.deleted_client_ids.filter((item) => item !== id);
+  }
+
+  const idx = store.clients.findIndex((c) => c.id === id);
+  if (idx >= 0) store.clients[idx] = client;
+  else store.clients.push(client);
+  saveLocalStore(store);
+
   if (isFirebaseConfigured() && firestore) {
     try {
       await setDoc(doc(firestore, "clients", id), client, { merge: true });
@@ -853,15 +975,18 @@ export async function saveCMSClient(data: Partial<CMSClientLogo> & { id?: string
     }
   }
 
-  const idx = store.clients.findIndex((c) => c.id === id);
-  if (idx >= 0) store.clients[idx] = client;
-  else store.clients.push(client);
-  saveLocalStore(store);
-
   return client;
 }
 
 export async function deleteCMSClient(id: string): Promise<boolean> {
+  const store = getLocalStore();
+  if (!store.deleted_client_ids) store.deleted_client_ids = [];
+  if (!store.deleted_client_ids.includes(id)) {
+    store.deleted_client_ids.push(id);
+  }
+  store.clients = store.clients.filter((c) => c.id !== id);
+  saveLocalStore(store);
+
   if (isFirebaseConfigured() && firestore) {
     try {
       await deleteDoc(doc(firestore, "clients", id));
@@ -869,9 +994,7 @@ export async function deleteCMSClient(id: string): Promise<boolean> {
       console.warn("Firestore delete client error:", e);
     }
   }
-  const store = getLocalStore();
-  store.clients = store.clients.filter((c) => c.id !== id);
-  saveLocalStore(store);
+
   return true;
 }
 

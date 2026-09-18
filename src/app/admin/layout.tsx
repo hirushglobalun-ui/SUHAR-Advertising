@@ -66,7 +66,6 @@ export default function AdminLayout({
             />
             <div>
               <div className="text-xs font-extrabold uppercase tracking-widest text-orange">CMS Console</div>
-              <div className="text-[10px] text-white/60">Firebase Edition</div>
             </div>
           </div>
 
@@ -158,18 +157,6 @@ export default function AdminLayout({
                 <div className="text-[10px] text-slate-400">admin@suhar.com</div>
               </div>
             </div>
-
-            {/* Quick Logout Button in Header */}
-            <button
-              type="button"
-              onClick={handleLogout}
-              disabled={isLoggingOut}
-              className="inline-flex items-center gap-1.5 rounded-xl border border-rose-200 bg-rose-50 px-3 py-1.5 text-xs font-bold text-rose-600 hover:bg-rose-100 hover:border-rose-300 transition-colors cursor-pointer"
-              title="Sign out of CMS"
-            >
-              <LogOut className="h-3.5 w-3.5" />
-              <span className="hidden sm:inline">{isLoggingOut ? "..." : "Sign Out"}</span>
-            </button>
           </div>
         </header>
 

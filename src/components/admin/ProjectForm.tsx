@@ -13,6 +13,7 @@ import {
   Save,
   Sparkles,
   Layers,
+  X,
 } from "lucide-react";
 import type { CMSProject, Category } from "@/types/cms";
 import { compressImage } from "@/lib/imageCompressor";
@@ -20,9 +21,11 @@ import { compressImage } from "@/lib/imageCompressor";
 interface ProjectFormProps {
   initialData?: CMSProject;
   isEdit?: boolean;
+  onSuccess?: () => void;
+  onCancel?: () => void;
 }
 
-export default function ProjectForm({ initialData, isEdit }: ProjectFormProps) {
+export default function ProjectForm({ initialData, isEdit, onSuccess, onCancel }: ProjectFormProps) {
   const router = useRouter();
   const [categories, setCategories] = useState<Category[]>([]);
   const [saving, setSaving] = useState(false);
@@ -142,8 +145,12 @@ export default function ProjectForm({ initialData, isEdit }: ProjectFormProps) {
         throw new Error(err.error || "Failed to save project");
       }
 
-      router.push("/admin/works");
-      router.refresh();
+      if (onSuccess) {
+        onSuccess();
+      } else {
+        router.push("/admin/works");
+        router.refresh();
+      }
     } catch (err: unknown) {
       alert(err instanceof Error ? err.message : "Error saving project");
     } finally {
@@ -152,16 +159,27 @@ export default function ProjectForm({ initialData, isEdit }: ProjectFormProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-8 max-w-5xl pb-16">
+    <form onSubmit={handleSubmit} className={`space-y-8 max-w-5xl ${onCancel ? "" : "pb-16"}`}>
       {/* Top Header & Actions */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-slate-200 pb-5">
         <div className="flex items-center gap-3">
-          <Link
-            href="/admin/works"
-            className="grid h-10 w-10 place-items-center rounded-xl border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 transition-colors"
-          >
-            <ArrowLeft className="h-4 w-4" />
-          </Link>
+          {onCancel ? (
+            <button
+              type="button"
+              onClick={onCancel}
+              className="grid h-10 w-10 place-items-center rounded-xl border border-slate-200 bg-white text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-colors cursor-pointer"
+              title="Close"
+            >
+              <X className="h-5 w-5" />
+            </button>
+          ) : (
+            <Link
+              href="/admin/works"
+              className="grid h-10 w-10 place-items-center rounded-xl border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 transition-colors"
+            >
+              <ArrowLeft className="h-4 w-4" />
+            </Link>
+          )}
           <div>
             <h1 className="font-display text-2xl font-black text-slate-900">
               {isEdit ? "Edit Project" : "Add New Project"}
@@ -174,10 +192,7 @@ export default function ProjectForm({ initialData, isEdit }: ProjectFormProps) {
 
         <div className="flex items-center gap-3">
           {/* AI Auto-Translation Pill */}
-          <div className="hidden sm:inline-flex items-center gap-2 rounded-xl bg-orange/10 px-3.5 py-2 text-xs font-semibold text-orange border border-orange/20">
-            <Sparkles className="h-3.5 w-3.5" />
-            <span>AI Auto-Translate Enabled</span>
-          </div>
+         
 
           <button
             type="submit"
@@ -491,12 +506,22 @@ export default function ProjectForm({ initialData, isEdit }: ProjectFormProps) {
 
       {/* Bottom Save Bar */}
       <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-200">
-        <Link
-          href="/admin/works"
-          className="rounded-xl border border-slate-300 bg-white px-5 py-2.5 text-xs font-bold uppercase tracking-wider text-slate-700 hover:bg-slate-50 transition-all"
-        >
-          Cancel
-        </Link>
+        {onCancel ? (
+          <button
+            type="button"
+            onClick={onCancel}
+            className="rounded-xl border border-slate-300 bg-white px-5 py-2.5 text-xs font-bold uppercase tracking-wider text-slate-700 hover:bg-slate-50 transition-all cursor-pointer"
+          >
+            Cancel
+          </button>
+        ) : (
+          <Link
+            href="/admin/works"
+            className="rounded-xl border border-slate-300 bg-white px-5 py-2.5 text-xs font-bold uppercase tracking-wider text-slate-700 hover:bg-slate-50 transition-all"
+          >
+            Cancel
+          </Link>
+        )}
         <button
           type="submit"
           disabled={saving}

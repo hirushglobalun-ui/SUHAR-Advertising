@@ -105,17 +105,20 @@ export default function MediaAdminPage() {
                 <span className="truncate text-[10px] font-mono text-slate-500 max-w-[90px]">
                   {url.split("/").pop()}
                 </span>
-                <button
-                  onClick={() => handleCopy(url)}
-                  className="rounded-md p-1 text-slate-400 hover:bg-white hover:text-orange"
-                  title="Copy URL"
-                >
-                  {copiedUrl === url ? (
-                    <Check className="h-3.5 w-3.5 text-emerald-600" />
-                  ) : (
-                    <Copy className="h-3.5 w-3.5" />
-                  )}
-                </button>
+                <div className="flex items-center gap-1">
+                  <button
+                    type="button"
+                    onClick={() => handleCopy(url)}
+                    className="rounded-md p-1 text-slate-400 hover:bg-white hover:text-orange transition-colors cursor-pointer"
+                    title="Copy URL"
+                  >
+                    {copiedUrl === url ? (
+                      <Check className="h-3.5 w-3.5 text-emerald-600" />
+                    ) : (
+                      <Copy className="h-3.5 w-3.5" />
+                    )}
+                  </button>
+                </div>
               </div>
             </div>
           ))}

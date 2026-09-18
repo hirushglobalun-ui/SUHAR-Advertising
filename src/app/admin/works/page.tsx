@@ -1,9 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
 import {
-  ExternalLink,
   Filter,
   Pencil,
   Plus,
@@ -11,6 +9,7 @@ import {
   Trash2,
 } from "lucide-react";
 import type { CMSProject, Category } from "@/types/cms";
+import ProjectForm from "@/components/admin/ProjectForm";
 
 export default function WorksAdminPage() {
   const [projects, setProjects] = useState<CMSProject[]>([]);
@@ -19,6 +18,10 @@ export default function WorksAdminPage() {
   const [search, setSearch] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [deletingId, setDeletingId] = useState<string | null>(null);
+
+  // Modal States
+  const [isAddingProject, setIsAddingProject] = useState(false);
+  const [editingProject, setEditingProject] = useState<CMSProject | null>(null);
 
   useEffect(() => {
     loadData();
@@ -103,13 +106,14 @@ export default function WorksAdminPage() {
           </p>
         </div>
 
-        <Link
-          href="/admin/works/new"
-          className="inline-flex items-center gap-2 rounded-xl bg-orange px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-white shadow-sm transition-all hover:bg-[#e05807]"
+        <button
+          type="button"
+          onClick={() => setIsAddingProject(true)}
+          className="inline-flex items-center gap-2 rounded-xl bg-orange px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-white shadow-sm transition-all hover:bg-[#e05807] cursor-pointer"
         >
           <Plus className="h-4 w-4" />
           <span>Add New Project</span>
-        </Link>
+        </button>
       </div>
 
       {/* Filter and Search Bar */}
@@ -154,13 +158,14 @@ export default function WorksAdminPage() {
             <p className="mt-1 text-xs text-slate-400">
               Try adjusting your search query or add your first project.
             </p>
-            <Link
-              href="/admin/works/new"
-              className="mt-4 inline-flex items-center gap-2 rounded-xl bg-orange px-4 py-2 text-xs font-bold text-white"
+            <button
+              type="button"
+              onClick={() => setIsAddingProject(true)}
+              className="mt-4 inline-flex items-center gap-2 rounded-xl bg-orange px-4 py-2 text-xs font-bold text-white hover:bg-[#e05807] transition-all cursor-pointer"
             >
               <Plus className="h-3.5 w-3.5" />
               <span>Create Project</span>
-            </Link>
+            </button>
           </div>
         ) : (
           <div className="overflow-x-auto">
@@ -225,26 +230,23 @@ export default function WorksAdminPage() {
                       </button>
                     </td>
                     <td className="px-6 py-4 text-right">
-                      <div className="flex items-center justify-end gap-2">
-                        <Link
-                          href={`/works/${p.slug}`}
-                          target="_blank"
-                          className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-700"
-                          title="View on Public Website"
-                        >
-                          <ExternalLink className="h-4 w-4" />
-                        </Link>
-                        <Link
-                          href={`/admin/works/${p.id}/edit`}
-                          className="rounded-lg p-1.5 text-slate-600 hover:bg-orange/10 hover:text-orange"
+                      <div className="flex items-center justify-end gap-1">
+                        {/* Edit Project Modal Button */}
+                        <button
+                          type="button"
+                          onClick={() => setEditingProject(p)}
+                          className="rounded-lg p-1.5 text-slate-600 hover:bg-orange/10 hover:text-orange transition-colors cursor-pointer"
                           title="Edit Project"
                         >
                           <Pencil className="h-4 w-4" />
-                        </Link>
+                        </button>
+
+                        {/* Delete Project Button */}
                         <button
+                          type="button"
                           onClick={() => handleDelete(p.id, p.title_en)}
                           disabled={deletingId === p.id}
-                          className="rounded-lg p-1.5 text-rose-500 hover:bg-rose-50"
+                          className="rounded-lg p-1.5 text-rose-500 hover:bg-rose-50 hover:text-rose-600 transition-colors cursor-pointer disabled:opacity-50"
                           title="Delete Project"
                         >
                           <Trash2 className="h-4 w-4" />
@@ -258,6 +260,35 @@ export default function WorksAdminPage() {
           </div>
         )}
       </div>
+
+      {/* Add / Edit Project Modal */}
+      {(isAddingProject || editingProject) && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto animate-fade-in"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setIsAddingProject(false);
+              setEditingProject(null);
+            }
+          }}
+        >
+          <div className="relative my-auto w-full max-w-4xl max-h-[92vh] overflow-y-auto rounded-3xl bg-white p-6 sm:p-8 shadow-2xl border border-slate-200">
+            <ProjectForm
+              initialData={editingProject || undefined}
+              isEdit={!!editingProject}
+              onSuccess={() => {
+                setIsAddingProject(false);
+                setEditingProject(null);
+                loadData();
+              }}
+              onCancel={() => {
+                setIsAddingProject(false);
+                setEditingProject(null);
+              }}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 }

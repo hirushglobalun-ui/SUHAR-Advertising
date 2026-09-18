@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Plus, Trash2, Pencil, X, Save, Upload, ExternalLink } from "lucide-react";
+import { Plus, Trash2, Pencil, X, Save, Upload, ExternalLink, Building2 } from "lucide-react";
 import type { CMSClientLogo } from "@/types/cms";
 import { compressImage } from "@/lib/imageCompressor";
 
@@ -19,7 +19,7 @@ export default function ClientsAdminPage() {
   async function loadClients() {
     setLoading(true);
     try {
-      const res = await fetch("/api/admin/clients");
+      const res = await fetch("/api/admin/clients", { cache: "no-store" });
       const data = await res.json();
       if (Array.isArray(data)) setClients(data);
     } catch (e) {
@@ -132,8 +132,13 @@ export default function ClientsAdminPage() {
 
       {/* Editor Modal */}
       {editingItem && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
-          <div className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-3xl bg-white p-6 sm:p-8 shadow-2xl">
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-fade-in"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setEditingItem(null);
+          }}
+        >
+          <div className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-3xl bg-white p-6 sm:p-8 shadow-2xl border border-slate-200">
             <div className="flex items-center justify-between border-b border-slate-100 pb-4">
               <h2 className="font-display text-lg font-bold text-slate-900">
                 {editingItem.id ? "Edit Client Logo" : "Add Client Logo"}
@@ -292,14 +297,18 @@ export default function ClientsAdminPage() {
             >
               <div className="absolute right-2 top-2 flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100">
                 <button
+                  type="button"
                   onClick={() => setEditingItem(c)}
-                  className="rounded-lg p-1 text-slate-400 hover:bg-slate-100 hover:text-orange"
+                  className="rounded-lg p-1 text-slate-400 hover:bg-slate-100 hover:text-orange transition-colors cursor-pointer"
+                  title="Edit Client"
                 >
                   <Pencil className="h-3.5 w-3.5" />
                 </button>
                 <button
+                  type="button"
                   onClick={() => handleDelete(c.id)}
-                  className="rounded-lg p-1 text-slate-400 hover:bg-rose-50 hover:text-rose-500"
+                  className="rounded-lg p-1 text-slate-400 hover:bg-rose-50 hover:text-rose-500 transition-colors cursor-pointer"
+                  title="Delete Client"
                 >
                   <Trash2 className="h-3.5 w-3.5" />
                 </button>

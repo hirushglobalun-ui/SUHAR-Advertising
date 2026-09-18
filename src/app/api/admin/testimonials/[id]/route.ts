@@ -24,6 +24,8 @@ export async function PUT(
     }
 
     const updated = await saveCMSTestimonial({ ...parseResult.data, id });
+    revalidatePath("/admin/testimonials");
+    revalidatePath("/admin");
     revalidatePath("/");
 
     return NextResponse.json({ success: true, testimonial: updated });
@@ -45,6 +47,8 @@ export async function DELETE(
 
     const { id } = await params;
     await deleteCMSTestimonial(id);
+    revalidatePath("/admin/testimonials");
+    revalidatePath("/admin");
     revalidatePath("/");
 
     return NextResponse.json({ success: true });

@@ -9,10 +9,17 @@ import {
 } from "@/lib/firebase/db";
 import { categoryInputSchema } from "@/lib/validation";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export async function GET() {
   try {
     const cats = await getCMSCategories();
-    return NextResponse.json(cats);
+    return NextResponse.json(cats, {
+      headers: {
+        "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
+      },
+    });
   } catch (err) {
     console.error("Fetch categories error:", err);
     return NextResponse.json({ error: "Failed to fetch categories" }, { status: 500 });
@@ -35,6 +42,8 @@ export async function POST(request: Request) {
     }
 
     const cat = await saveCMSCategory(parseResult.data);
+    revalidatePath("/admin/categories");
+    revalidatePath("/admin");
     revalidatePath("/works");
     revalidatePath("/portfolio");
     revalidatePath("/");
@@ -43,6 +52,35 @@ export async function POST(request: Request) {
   } catch (err) {
     console.error("Save category error:", err);
     return NextResponse.json({ error: "Failed to save category" }, { status: 500 });
+  }
+}
+
+export async function PUT(request: Request) {
+  try {
+    const session = await getAdminSession();
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized. Admin session required." }, { status: 401 });
+    }
+
+    const rawBody = await request.json();
+    const parseResult = categoryInputSchema.safeParse(rawBody);
+
+    if (!parseResult.success) {
+      const errorMsg = parseResult.error.errors.map((e) => `${e.path.join(".")}: ${e.message}`).join(", ");
+      return NextResponse.json({ error: errorMsg }, { status: 400 });
+    }
+
+    const cat = await saveCMSCategory(parseResult.data);
+    revalidatePath("/admin/categories");
+    revalidatePath("/admin");
+    revalidatePath("/works");
+    revalidatePath("/portfolio");
+    revalidatePath("/");
+
+    return NextResponse.json({ success: true, category: cat });
+  } catch (err) {
+    console.error("Update category error:", err);
+    return NextResponse.json({ error: "Failed to update category" }, { status: 500 });
   }
 }
 
@@ -80,6 +118,8 @@ export async function DELETE(request: Request) {
     }
 
     await deleteCMSCategory(id);
+    revalidatePath("/admin/categories");
+    revalidatePath("/admin");
     revalidatePath("/works");
     revalidatePath("/portfolio");
     revalidatePath("/");

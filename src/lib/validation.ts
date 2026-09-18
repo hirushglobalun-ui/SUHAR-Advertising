@@ -35,6 +35,7 @@ export const categoryInputSchema = z.object({
   id: z.string().max(100).optional(),
   name_en: z.string().min(1, "English name is required").max(100),
   name_ar: z.string().max(100).optional(),
+  slug: z.string().max(100).optional(),
   description_en: z.string().max(500).optional(),
   description_ar: z.string().max(500).optional(),
   display_order: z.number().int().min(1).max(9999).optional(),

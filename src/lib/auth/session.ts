@@ -158,6 +158,20 @@ interface AttemptRecord {
 const loginAttempts = new Map<string, AttemptRecord>();
 
 export function checkLoginRateLimit(identifier: string): { allowed: boolean; remainingSeconds?: number } {
+  // Do not lock out local development / internal IPs
+  const isLocal =
+    identifier === "unknown_ip" ||
+    identifier === "127.0.0.1" ||
+    identifier === "::1" ||
+    identifier === "localhost" ||
+    identifier.startsWith("192.168.") ||
+    identifier.startsWith("10.") ||
+    identifier.startsWith("172.");
+
+  if (isLocal) {
+    return { allowed: true };
+  }
+
   const record = loginAttempts.get(identifier);
   if (!record) return { allowed: true };
 
@@ -177,6 +191,19 @@ export function checkLoginRateLimit(identifier: string): { allowed: boolean; rem
 }
 
 export function recordFailedLogin(identifier: string) {
+  const isLocal =
+    identifier === "unknown_ip" ||
+    identifier === "127.0.0.1" ||
+    identifier === "::1" ||
+    identifier === "localhost" ||
+    identifier.startsWith("192.168.") ||
+    identifier.startsWith("10.") ||
+    identifier.startsWith("172.");
+
+  if (isLocal) {
+    return; // Do not lock out local administrator
+  }
+
   const record = loginAttempts.get(identifier) || { failures: 0, lockedUntil: 0 };
   record.failures += 1;
 

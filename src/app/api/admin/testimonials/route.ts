@@ -9,6 +9,9 @@ import {
 } from "@/lib/firebase/db";
 import { testimonialInputSchema, settingsPatchSchema } from "@/lib/validation";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export async function GET(request: Request) {
   try {
     const session = await getAdminSession();
@@ -35,10 +38,18 @@ export async function GET(request: Request) {
       return NextResponse.json({
         testimonials,
         settings,
+      }, {
+        headers: {
+          "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
+        },
       });
     }
 
-    return NextResponse.json(testimonials);
+    return NextResponse.json(testimonials, {
+      headers: {
+        "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
+      },
+    });
   } catch (err) {
     console.error("Fetch testimonials error:", err);
     return NextResponse.json({ error: "Failed to fetch testimonials" }, { status: 500 });
@@ -61,6 +72,8 @@ export async function POST(request: Request) {
     }
 
     const testimonial = await saveCMSTestimonial(parseResult.data);
+    revalidatePath("/admin/testimonials");
+    revalidatePath("/admin");
     revalidatePath("/");
 
     return NextResponse.json({ success: true, testimonial });
@@ -102,6 +115,8 @@ export async function PATCH(request: Request) {
       }
     }
 
+    revalidatePath("/admin/testimonials");
+    revalidatePath("/admin");
     revalidatePath("/");
     return NextResponse.json({ success: true, settings: updatedSettings });
   } catch (err) {

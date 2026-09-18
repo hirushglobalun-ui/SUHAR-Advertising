@@ -37,7 +37,7 @@ export default function TestimonialsAdminPage() {
   async function loadTestimonials() {
     setLoading(true);
     try {
-      const res = await fetch("/api/admin/testimonials?settings=true");
+      const res = await fetch("/api/admin/testimonials?settings=true", { cache: "no-store" });
       const data = await res.json();
       if (data?.testimonials && Array.isArray(data.testimonials)) {
         setTestimonials(data.testimonials);
@@ -461,8 +461,13 @@ export default function TestimonialsAdminPage() {
 
       {/* Editor Modal */}
       {editingItem && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
-          <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-3xl bg-white p-6 sm:p-8 shadow-2xl">
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-fade-in"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setEditingItem(null);
+          }}
+        >
+          <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-3xl bg-white p-6 sm:p-8 shadow-2xl border border-slate-200">
             <div className="flex items-center justify-between border-b border-slate-100 pb-4">
               <h2 className="font-display text-lg font-bold text-slate-900">
                 {editingItem.id ? "Edit Testimonial" : "Add New Testimonial"}
@@ -551,6 +556,64 @@ export default function TestimonialsAdminPage() {
                 </div>
               </div>
 
+              {/* Review Star Rating Selector */}
+              <div>
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-700">
+                    Review Rating (Stars) *
+                  </label>
+                  <span className="text-xs font-bold text-amber-600">
+                    {editingItem.rating ?? 5} out of 5 Stars
+                  </span>
+                </div>
+                <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-3.5">
+                  {/* Interactive Star Buttons */}
+                  <div className="flex items-center gap-1">
+                    {[1, 2, 3, 4, 5].map((starValue) => {
+                      const currentRating = editingItem.rating ?? 5;
+                      const isFilled = starValue <= currentRating;
+                      return (
+                        <button
+                          key={starValue}
+                          type="button"
+                          onClick={() =>
+                            setEditingItem({ ...editingItem, rating: starValue })
+                          }
+                          className="group p-1 transition-transform hover:scale-125 focus:outline-none cursor-pointer"
+                          title={`Set to ${starValue} star${starValue > 1 ? "s" : ""}`}
+                        >
+                          <Star
+                            className={`h-6 w-6 transition-colors ${
+                              isFilled
+                                ? "fill-amber-400 text-amber-400 drop-shadow-xs"
+                                : "fill-slate-200 text-slate-300 group-hover:fill-amber-200 group-hover:text-amber-300"
+                            }`}
+                          />
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  {/* Quick Select Buttons */}
+                  <div className="flex items-center gap-1.5">
+                    {[1, 2, 3, 4, 5].map((num) => (
+                      <button
+                        key={num}
+                        type="button"
+                        onClick={() => setEditingItem({ ...editingItem, rating: num })}
+                        className={`rounded-lg px-2.5 py-1 text-xs font-bold transition-all cursor-pointer ${
+                          (editingItem.rating ?? 5) === num
+                            ? "bg-amber-500 text-white shadow-xs"
+                            : "bg-white text-slate-600 border border-slate-200 hover:bg-slate-100"
+                        }`}
+                      >
+                        {num}★
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
               <div>
                 <label className="mb-1 block text-xs font-bold uppercase tracking-wider text-slate-600">
                   Testimonial Quote (English) *
@@ -631,11 +694,28 @@ export default function TestimonialsAdminPage() {
                 <div>
                   {/* Top Bar: Stars + Live Badge / Toggle */}
                   <div className="flex items-center justify-between gap-2">
-                    <div className="flex text-amber-400">
-                      {[...Array(t.rating || 5)].map((_, i) => (
-                        <Star key={i} className="h-4 w-4 fill-amber-400 text-amber-400" />
-                      ))}
-                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setEditingItem(t)}
+                      className="flex items-center gap-1.5 rounded-xl bg-slate-50 px-2 py-1 border border-slate-200/60 hover:border-amber-400/50 hover:bg-amber-50/40 transition-all cursor-pointer group"
+                      title={`Rated ${t.rating ?? 5} / 5 stars - Click to edit`}
+                    >
+                      <div className="flex items-center">
+                        {[1, 2, 3, 4, 5].map((star) => (
+                          <Star
+                            key={star}
+                            className={`h-3.5 w-3.5 ${
+                              star <= (t.rating ?? 5)
+                                ? "fill-amber-400 text-amber-400"
+                                : "fill-slate-200 text-slate-200"
+                            }`}
+                          />
+                        ))}
+                      </div>
+                      <span className="text-[11px] font-bold text-slate-600 group-hover:text-amber-600">
+                        {t.rating ?? 5}/5
+                      </span>
+                    </button>
 
                     {/* Accurate 3-State Status Badge */}
                     <div className="flex items-center gap-1.5">
@@ -705,15 +785,17 @@ export default function TestimonialsAdminPage() {
 
                     <div className="flex items-center gap-1">
                       <button
+                        type="button"
                         onClick={() => setEditingItem(t)}
-                        className="rounded-lg p-1.5 text-slate-500 hover:bg-orange/10 hover:text-orange cursor-pointer"
+                        className="rounded-lg p-1.5 text-slate-500 hover:bg-orange/10 hover:text-orange transition-colors cursor-pointer"
                         title="Edit Testimonial"
                       >
                         <Pencil className="h-4 w-4" />
                       </button>
                       <button
+                        type="button"
                         onClick={() => handleDelete(t.id)}
-                        className="rounded-lg p-1.5 text-rose-500 hover:bg-rose-50 cursor-pointer"
+                        className="rounded-lg p-1.5 text-rose-500 hover:bg-rose-50 hover:text-rose-600 transition-colors cursor-pointer"
                         title="Delete Testimonial"
                       >
                         <Trash2 className="h-4 w-4" />
@@ -782,6 +864,7 @@ export default function TestimonialsAdminPage() {
           })
         )}
       </div>
+
     </div>
   );
 }

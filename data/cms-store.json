@@ -48,6 +48,34 @@
       "name_en": "sample",
       "name_ar": "عينة",
       "display_order": 8
+    },
+    {
+      "id": "cat-1789728553097",
+      "slug": "lk",
+      "name_en": "lk",
+      "name_ar": "LK",
+      "display_order": 8
+    },
+    {
+      "id": "cat-1789728572505",
+      "slug": "kcbwblwr",
+      "name_en": "kcbwblwr",
+      "name_ar": "kcbwblwr",
+      "display_order": 8
+    },
+    {
+      "id": "cat-1789728581597",
+      "slug": "k-has-cas-d",
+      "name_en": "k,has cas d",
+      "name_ar": "k,has cas d",
+      "display_order": 8
+    },
+    {
+      "id": "cat-1789729981467",
+      "slug": "lskjd",
+      "name_en": "lskjd",
+      "name_ar": "lskjd",
+      "display_order": 11
     }
   ],
   "projects": [
@@ -59,6 +87,7 @@
       "subtitle_en": "Illuminated Facade Signage & Architectural Letters",
       "subtitle_ar": "لافتة واجهة مضيئة وحروف معمارية بارزة",
       "category_slug": "Signage",
+      "category": "Signage",
       "client_en": "Al-Fanar Real Estate & Commercial Complex",
       "client_ar": "مجمع الفنار العقاري والتجاري",
       "year": "2024",
@@ -92,16 +121,17 @@
         "رؤية واضحة ومميزة من مسافة تزيد عن 1.2 كيلومتر",
         "توفير أكثر من 40% من استهلاك طاقة الإضاءة باستخدام محولات ذكية"
       ],
-      "cover_image": "/assets/portfolio-1.jpg",
+      "cover_image": "https://res.cloudinary.com/hflmixsy/image/upload/v1789733261/suhar_advertising/fyhuckoles1v1ntf0bvx.webp",
       "gallery": [
-        "/assets/portfolio-1.jpg",
+        "https://res.cloudinary.com/hflmixsy/image/upload/v1789733261/suhar_advertising/fyhuckoles1v1ntf0bvx.webp",
         "/assets/portfolio-6.jpg",
         "/assets/portfolio-3.jpg"
       ],
       "is_published": false,
       "is_featured": true,
       "display_order": 1,
-      "updated_at": "2026-09-17T11:50:05.731Z"
+      "created_at": "2026-09-18T12:07:48.461Z",
+      "updated_at": "2026-09-18T12:07:48.461Z"
     },
     {
       "id": "proj-2",
@@ -447,6 +477,40 @@
       "display_order": 99,
       "created_at": "2026-09-18T06:13:04.877Z",
       "updated_at": "2026-09-18T06:13:04.877Z"
+    },
+    {
+      "id": "proj-1789734839089",
+      "slug": "g",
+      "title_en": "g",
+      "title_ar": "ز",
+      "subtitle_en": "dd",
+      "subtitle_ar": "يوم",
+      "category_slug": "Signage",
+      "category": "Signage",
+      "client_en": "gsgh",
+      "client_ar": "gsgh",
+      "year": "2026",
+      "location_en": "Muscat, Sultanate of Oman",
+      "location_ar": "مسقط، سلطنة عمان",
+      "overview_en": "dfsagdrfgegbfbgfdgregfrt",
+      "overview_ar": "dfsagdrfgegbfbgfdgregfrt",
+      "challenge_en": "",
+      "challenge_ar": "",
+      "solution_en": "",
+      "solution_ar": "",
+      "deliverables_en": [],
+      "deliverables_ar": [],
+      "impact_en": [],
+      "impact_ar": [],
+      "cover_image": "/assets/portfolio-1.jpg",
+      "gallery": [
+        "/assets/portfolio-1.jpg"
+      ],
+      "is_published": true,
+      "is_featured": false,
+      "display_order": 1,
+      "created_at": "2026-09-18T12:33:59.089Z",
+      "updated_at": "2026-09-18T12:33:59.089Z"
     }
   ],
   "testimonials": [
@@ -464,7 +528,7 @@
       "photo_url": "",
       "is_published": true,
       "display_order": 1,
-      "updated_at": "2026-09-17T16:53:33.740Z"
+      "updated_at": "2026-09-18T10:53:39.343Z"
     },
     {
       "id": "test-2",
@@ -492,11 +556,11 @@
       "company_ar": "معرض الخليج للابتكار",
       "text_en": "Their exhibition build was the talk of the show. Precision, lighting, presence — everything we hoped for.",
       "text_ar": "ستاندنا كان حديث المعرض. دقّة وإضاءة وحضور — تماماً كما تمنّينا.",
-      "rating": 5,
+      "rating": 2,
       "photo_url": "",
       "is_published": true,
       "display_order": 4,
-      "updated_at": "2026-09-17T16:53:35.314Z"
+      "updated_at": "2026-09-18T12:06:23.800Z"
     },
     {
       "id": "test-1789662143860",
