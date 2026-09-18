@@ -16,6 +16,9 @@ dist-ssr/
 .vinxi/
 .tanstack/**
 .nitro/
+# Environment Variables
+.env
+.env*.local
 *.local
 
 # Wrangler / Cloudflare
