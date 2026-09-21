@@ -4,15 +4,11 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import Reveal from "@/components/common/Reveal";
-import { useLang, useT } from "@/lib/i18n";
-import { getImgSrc, portfolioImgs } from "@/lib/data";
-import { projectsData } from "@/lib/projects";
+import { useLang } from "@/lib/i18n";
 import type { CMSProject, Category } from "@/types/cms";
 
 export default function Portfolio() {
   const { t, lang } = useLang();
-  const staticItems = Array.isArray(useT("portfolio.items")) ? useT<[string, string, string][]>("portfolio.items") : [];
-  const staticCats = Array.isArray(useT("portfolio.cats")) ? useT<string[]>("portfolio.cats") : [];
 
   const [cmsProjects, setCmsProjects] = useState<CMSProject[]>([]);
   const [cmsCategories, setCmsCategories] = useState<Category[]>([]);
@@ -20,8 +16,8 @@ export default function Portfolio() {
 
   useEffect(() => {
     Promise.all([
-      fetch("/api/admin/works?published=true").then((r) => r.json()),
-      fetch("/api/admin/categories").then((r) => r.json()),
+      fetch("/api/admin/works?published=true", { cache: "no-store" }).then((r) => r.json()),
+      fetch("/api/admin/categories", { cache: "no-store" }).then((r) => r.json()),
     ])
       .then(([projs, cats]) => {
         if (Array.isArray(projs) && projs.length > 0) setCmsProjects(projs);
@@ -35,29 +31,16 @@ export default function Portfolio() {
   const cats =
     cmsCategories.length > 0
       ? [isRtl ? "الكل" : "All", ...cmsCategories.map((c) => (isRtl ? c.name_ar : c.name_en))]
-      : staticCats;
+      : [];
 
-  const allProjects =
-    cmsProjects.length > 0
-      ? cmsProjects.map((p) => ({
-          title: isRtl ? p.title_ar : p.title_en,
-          subtitle: isRtl ? p.subtitle_ar : p.subtitle_en,
-          category: p.category_slug,
-          coverImage: p.cover_image,
-          slug: p.slug,
-          project: p,
-        }))
-      : staticItems.map((it, i) => {
-          const project = projectsData[i % projectsData.length];
-          return {
-            title: it[0],
-            subtitle: it[1],
-            category: it[2],
-            coverImage: getImgSrc(portfolioImgs[i % portfolioImgs.length]),
-            slug: project?.slug || "al-fanar-tower",
-            project: project,
-          };
-        });
+  const allProjects = cmsProjects.map((p) => ({
+    title: isRtl ? p.title_ar : p.title_en,
+    subtitle: isRtl ? p.subtitle_ar : p.subtitle_en,
+    category: p.category_slug,
+    coverImage: p.cover_image,
+    slug: p.slug,
+    project: p,
+  }));
 
   const filtered = allProjects
     .filter((p) => {
@@ -122,8 +105,13 @@ export default function Portfolio() {
         </Reveal>
 
         {/* Portfolio Grid */}
-        <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {filtered.map((item, i) => (
+        {filtered.length === 0 ? (
+          <div className="mt-12 rounded-2xl border border-white/10 bg-white/5 py-16 text-center text-sm font-medium text-white/50">
+            {lang === "ar" ? "لا توجد مشاريع مضافة حالياً." : "No projects added yet."}
+          </div>
+        ) : (
+          <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {filtered.map((item, i) => (
             <Reveal key={`${active}-${item.slug}-${i}`} delay={(i % 3) * 80} className="h-full">
               <Link
                 href={`/works/${item.slug}`}
@@ -174,6 +162,7 @@ export default function Portfolio() {
             </Reveal>
           ))}
         </div>
+        )}
       </div>
     </section>
   );

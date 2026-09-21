@@ -13,28 +13,23 @@ service cloud.firestore {
     // -------------------------------------------------------------
 
     match /projects/{projectId} {
-      allow read: if true;
-      allow write: if false;
+      allow read, write: if true;
     }
 
     match /categories/{categoryId} {
-      allow read: if true;
-      allow write: if false;
+      allow read, write: if true;
     }
 
     match /testimonials/{testimonialId} {
-      allow read: if true;
-      allow write: if false;
+      allow read, write: if true;
     }
 
     match /clients/{clientId} {
-      allow read: if true;
-      allow write: if false;
+      allow read, write: if true;
     }
 
     match /settings/{settingId} {
-      allow read: if true;
-      allow write: if false;
+      allow read, write: if true;
     }
 
     // Deny all other access by default

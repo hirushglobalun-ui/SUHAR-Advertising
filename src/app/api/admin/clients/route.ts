@@ -4,6 +4,9 @@ import { getAdminSession } from "@/lib/auth/session";
 import { getCMSClients, saveCMSClient } from "@/lib/firebase/db";
 import { clientLogoInputSchema } from "@/lib/validation";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export async function GET(request: Request) {
   try {
     const session = await getAdminSession();
@@ -13,7 +16,11 @@ export async function GET(request: Request) {
     const onlyActive = !session || searchParams.get("active") === "true";
 
     const clients = await getCMSClients(onlyActive);
-    return NextResponse.json(clients);
+    return NextResponse.json(clients, {
+      headers: {
+        "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
+      },
+    });
   } catch (err) {
     console.error("Fetch clients error:", err);
     return NextResponse.json({ error: "Failed to fetch clients" }, { status: 500 });

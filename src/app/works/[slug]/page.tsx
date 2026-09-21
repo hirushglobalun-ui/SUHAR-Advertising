@@ -13,9 +13,7 @@ export async function generateStaticParams() {
     console.warn("generateStaticParams CMS fetch error:", e);
   }
 
-  return getAllProjects().map((project) => ({
-    slug: project.slug,
-  }));
+  return [];
 }
 
 export default async function ProjectPage({
@@ -53,10 +51,5 @@ export default async function ProjectPage({
     console.warn("Error fetching CMS project in detail page:", e);
   }
 
-  const staticProject = getProjectBySlug(slug);
-  if (!staticProject) {
-    notFound();
-  }
-
-  return <ProjectDetailClient project={staticProject} />;
+  notFound();
 }

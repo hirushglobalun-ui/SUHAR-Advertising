@@ -411,12 +411,9 @@ export default function ProjectForm({
         router.refresh();
       }
     } catch (error: unknown) {
-      console.error(
-        "Error saving project:",
-        error instanceof Error
-          ? error.message
-          : error
-      );
+      const msg = error instanceof Error ? error.message : "Failed to save project";
+      console.error("Error saving project:", msg);
+      alert(msg);
     } finally {
       setSaving(false);
     }

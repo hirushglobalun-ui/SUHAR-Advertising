@@ -537,10 +537,16 @@ export async function getCMSProjects(options?: {
           ) {
             const localP = map.get(remoteP.id);
 
-            map.set(
-              remoteP.id,
-              localP ? { ...localP, ...remoteP } : remoteP
-            );
+            if (localP) {
+              const localTs = getProjectTimestamp(localP);
+              const remoteTs = getProjectTimestamp(remoteP);
+              map.set(
+                remoteP.id,
+                localTs >= remoteTs ? { ...remoteP, ...localP } : { ...localP, ...remoteP }
+              );
+            } else {
+              map.set(remoteP.id, remoteP);
+            }
           }
         }
       }

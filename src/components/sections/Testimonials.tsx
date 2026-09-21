@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Star, ChevronLeft, ChevronRight } from "lucide-react";
 import Reveal from "@/components/common/Reveal";
-import { useLang, useT } from "@/lib/i18n";
+import { useLang } from "@/lib/i18n";
 import type { CMSTestimonial } from "@/types/cms";
 import {
   Carousel,
@@ -14,9 +14,6 @@ import {
 
 export default function Testimonials() {
   const { t, lang } = useLang();
-
-  const staticItems =
-    useT<[string, string, string][]>("testimonials.items") || [];
 
   const [cmsTestimonials, setCmsTestimonials] = useState<CMSTestimonial[]>(
     []
@@ -32,7 +29,7 @@ export default function Testimonials() {
   // FETCH CMS TESTIMONIALS
   // =========================================================
   useEffect(() => {
-    fetch("/api/admin/testimonials?published=true")
+    fetch("/api/admin/testimonials?published=true", { cache: "no-store" })
       .then((r) => r.json())
       .then((data) => {
         const list = Array.isArray(data) ? data : data?.testimonials;
@@ -48,39 +45,28 @@ export default function Testimonials() {
   // TESTIMONIAL DATA
   // =========================================================
   const displayList = useMemo(() => {
-    if (cmsTestimonials.length > 0) {
-      return cmsTestimonials.map((item) => ({
-        name:
-          isRtl && item.person_name_ar
-            ? item.person_name_ar
-            : item.person_name_en,
+    return cmsTestimonials.map((item) => ({
+      name:
+        isRtl && item.person_name_ar
+          ? item.person_name_ar
+          : item.person_name_en,
 
-        role: `${isRtl && item.designation_ar
-            ? item.designation_ar
-            : item.designation_en
-          }, ${isRtl && item.company_ar
-            ? item.company_ar
-            : item.company_en
-          }`,
+      role: `${isRtl && item.designation_ar
+          ? item.designation_ar
+          : item.designation_en
+        }, ${isRtl && item.company_ar
+          ? item.company_ar
+          : item.company_en
+        }`,
 
-        quote:
-          isRtl && item.text_ar
-            ? item.text_ar
-            : item.text_en,
+      quote:
+        isRtl && item.text_ar
+          ? item.text_ar
+          : item.text_en,
 
-        rating: item.rating || 5,
-      }));
-    }
-
-    return (Array.isArray(staticItems) ? staticItems : []).map(
-      ([name, role, quote]) => ({
-        name,
-        role,
-        quote,
-        rating: 5,
-      })
-    );
-  }, [cmsTestimonials, staticItems, isRtl]);
+      rating: item.rating || 5,
+    }));
+  }, [cmsTestimonials, isRtl]);
 
   // =========================================================
   // CREATE ENOUGH DUPLICATES
@@ -127,6 +113,10 @@ export default function Testimonials() {
 
     return () => clearInterval(interval);
   }, [api, displayList.length]);
+
+  if (displayList.length === 0) {
+    return null;
+  }
 
   return (
     <section className="relative overflow-hidden bg-white py-14 text-navy lg:py-20">

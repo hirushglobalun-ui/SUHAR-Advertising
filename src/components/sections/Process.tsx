@@ -32,11 +32,9 @@ export default function Process() {
   const lineRef = useRef<HTMLDivElement | null>(null);
 
   // =========================================================
-  // ENGLISH - KEEP EXISTING SCROLLING
+  // SCROLL ANIMATION TIMELINE (ENGLISH & ARABIC RTL)
   // =========================================================
   useEffect(() => {
-    if (isArabic) return;
-
     const section = sectionRef.current;
     const line = lineRef.current;
 
@@ -193,9 +191,9 @@ export default function Process() {
 
           {/* Steps */}
           <div className="flex flex-col gap-4">
-            {steps.map(([title, desc], i) => {
+            {displaySteps.map(([title, desc], i) => {
               const threshold =
-                i / Math.max(steps.length - 1, 1);
+                i / Math.max(displaySteps.length - 1, 1);
 
               const isActive =
                 reducedMotion ||
@@ -315,9 +313,9 @@ export default function Process() {
 
           {/* Six steps */}
           <div className="relative z-10 grid grid-cols-6 gap-6">
-            {steps.map(([title, desc], i) => {
+            {displaySteps.map(([title, desc], i) => {
               const threshold =
-                i / Math.max(steps.length - 1, 1);
+                i / Math.max(displaySteps.length - 1, 1);
 
               const isActive =
                 reducedMotion ||

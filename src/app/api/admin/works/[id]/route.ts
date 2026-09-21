@@ -4,6 +4,9 @@ import { getAdminSession } from "@/lib/auth/session";
 import { getCMSProjectById, saveCMSProject, deleteCMSProject } from "@/lib/firebase/db";
 import { projectCreateSchema, projectUpdateSchema } from "@/lib/validation";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export async function GET(
   _request: Request,
   { params }: { params: Promise<{ id: string }> }
@@ -22,7 +25,11 @@ export async function GET(
       return NextResponse.json({ error: "Project not found" }, { status: 404 });
     }
 
-    return NextResponse.json(project);
+    return NextResponse.json(project, {
+      headers: {
+        "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
+      },
+    });
   } catch (err) {
     console.error("Fetch project error:", err);
     return NextResponse.json({ error: "Failed to fetch project" }, { status: 500 });

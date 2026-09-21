@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { useLang } from "@/lib/i18n";
-import { clientBrands } from "@/lib/data";
 import type { CMSClientLogo } from "@/types/cms";
 
 export default function Clients() {
@@ -10,7 +9,7 @@ export default function Clients() {
   const [cmsClients, setCmsClients] = useState<CMSClientLogo[]>([]);
 
   useEffect(() => {
-    fetch("/api/admin/clients?active=true")
+    fetch("/api/admin/clients?active=true", { cache: "no-store" })
       .then((r) => r.json())
       .then((data) => {
         if (Array.isArray(data) && data.length > 0) {
@@ -20,10 +19,11 @@ export default function Clients() {
       .catch(() => {});
   }, []);
 
-  const brands =
-    cmsClients.length > 0
-      ? cmsClients.map((c) => ({ name: c.name_en, logo: c.logo_url }))
-      : clientBrands.map((b) => ({ name: b, logo: "" }));
+  const brands = cmsClients.map((c) => ({ name: c.name_en, logo: c.logo_url }));
+
+  if (brands.length === 0) {
+    return null;
+  }
 
   const list = [...brands, ...brands, ...brands, ...brands];
 
@@ -34,22 +34,26 @@ export default function Clients() {
           {t("clients.title")}
         </p>
       </div>
-      <div className="relative mt-6 overflow-hidden" dir="ltr">
+      <div className="relative mt-6 overflow-hidden py-4" dir="ltr">
         {/* Left & Right gradient edge masks for seamless luxury appearance */}
         <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-16 sm:w-28 bg-gradient-to-r from-white to-transparent" />
         <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-16 sm:w-28 bg-gradient-to-l from-white to-transparent" />
 
-        <div className="flex w-max animate-marquee items-center gap-10 sm:gap-14">
+        <div className="flex w-max animate-marquee items-center gap-12 sm:gap-16 py-4 hover:[animation-play-state:paused]">
           {list.map((b, i) => (
-            <div key={i} className="flex items-center select-none">
+            <div
+              key={i}
+              className="group/item relative flex items-center justify-center select-none px-3 py-2 transition-transform duration-300 hover:z-30 cursor-pointer"
+              title={b.name}
+            >
               {b.logo ? (
                 <img
                   src={b.logo}
                   alt={b.name}
-                  className="h-8 w-auto max-w-[130px] object-contain opacity-85 hover:opacity-100 transition-opacity"
+                  className="h-10 sm:h-12 w-auto max-w-[140px] sm:max-w-[170px] object-contain opacity-75 transition-all duration-300 ease-out group-hover/item:scale-150 group-hover/item:opacity-100 group-hover/item:drop-shadow-lg"
                 />
               ) : (
-                <span className="font-display text-xl sm:text-2xl font-extrabold tracking-tight text-navy hover:text-gold transition-colors">
+                <span className="font-display text-xl sm:text-2xl font-extrabold tracking-tight text-navy transition-all duration-300 ease-out group-hover/item:scale-130 group-hover/item:text-gold">
                   {b.name}
                 </span>
               )}

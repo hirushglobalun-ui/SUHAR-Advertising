@@ -4,17 +4,13 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import { ArrowLeft, ArrowUpRight, Sparkles } from "lucide-react";
 import Reveal from "@/components/common/Reveal";
-import { useLang, useT } from "@/lib/i18n";
-import { getImgSrc, portfolioImgs } from "@/lib/data";
-import { projectsData } from "@/lib/projects";
+import { useLang } from "@/lib/i18n";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import type { CMSProject, Category } from "@/types/cms";
 
 export default function WorksPage() {
   const { t, lang } = useLang();
-  const staticItems = Array.isArray(useT("portfolio.items")) ? useT<[string, string, string][]>("portfolio.items") : [];
-  const staticCats = Array.isArray(useT("portfolio.cats")) ? useT<string[]>("portfolio.cats") : [];
 
   const [cmsProjects, setCmsProjects] = useState<CMSProject[]>([]);
   const [cmsCategories, setCmsCategories] = useState<Category[]>([]);
@@ -22,8 +18,8 @@ export default function WorksPage() {
 
   useEffect(() => {
     Promise.all([
-      fetch("/api/admin/works?published=true").then((r) => r.json()),
-      fetch("/api/admin/categories").then((r) => r.json()),
+      fetch("/api/admin/works?published=true", { cache: "no-store" }).then((r) => r.json()),
+      fetch("/api/admin/categories", { cache: "no-store" }).then((r) => r.json()),
     ])
       .then(([projs, cats]) => {
         if (Array.isArray(projs) && projs.length > 0) setCmsProjects(projs);
@@ -38,34 +34,19 @@ export default function WorksPage() {
   const cats =
     cmsCategories.length > 0
       ? [isRtl ? "الكل" : "All", ...cmsCategories.map((c) => (isRtl ? c.name_ar : c.name_en))]
-      : staticCats;
+      : [];
 
   // Normalized list of projects
-  const allProjects =
-    cmsProjects.length > 0
-      ? cmsProjects.map((p) => ({
-          title: isRtl ? p.title_ar : p.title_en,
-          subtitle: isRtl ? p.subtitle_ar : p.subtitle_en,
-          category: p.category_slug,
-          coverImage: p.cover_image,
-          slug: p.slug,
-          client: isRtl ? p.client_ar : p.client_en,
-          location: isRtl ? p.location_ar : p.location_en,
-          project: p,
-        }))
-      : staticItems.map((it, i) => {
-          const project = projectsData[i % projectsData.length];
-          return {
-            title: it[0],
-            subtitle: it[1],
-            category: it[2],
-            coverImage: getImgSrc(portfolioImgs[i % portfolioImgs.length]),
-            slug: project?.slug || "al-fanar-tower",
-            client: project?.client?.[lang] || "Corporate Client",
-            location: project?.location?.[lang] || "Oman",
-            project: project,
-          };
-        });
+  const allProjects = cmsProjects.map((p) => ({
+    title: isRtl ? p.title_ar : p.title_en,
+    subtitle: isRtl ? p.subtitle_ar : p.subtitle_en,
+    category: p.category_slug,
+    coverImage: p.cover_image,
+    slug: p.slug,
+    client: isRtl ? p.client_ar : p.client_en,
+    location: isRtl ? p.location_ar : p.location_en,
+    project: p,
+  }));
 
   // Filtered by selected tab
   const filtered = allProjects.filter((p) => {
@@ -186,64 +167,77 @@ export default function WorksPage() {
             </Reveal>
 
             {/* Portfolio Grid */}
-            <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {filtered.map((item, i) => (
-                 <Reveal key={`${active}-${item.slug}-${i}`} delay={(i % 3) * 80} className="h-full">
-                  <Link
-                    href={`/works/${item.slug}`}
-                    className="group flex h-full flex-col overflow-hidden rounded-3xl border border-navy/10 bg-white p-3.5 sm:p-4 text-left shadow-xs transition-all duration-500 hover:-translate-y-1.5 hover:border-orange/50 hover:shadow-xl hover:shadow-navy/10 focus:outline-none focus:ring-2 focus:ring-orange rtl:text-right"
-                  >
-                    {/* Photo Thumbnail Container */}
-                    <div className="relative aspect-[16/11] w-full overflow-hidden rounded-2xl bg-surface">
-                      <img
-                        src={item.coverImage}
-                        alt={item.title}
-                        loading="lazy"
-                        className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-                      />
+            {filtered.length === 0 ? (
+              <div className="mt-12 rounded-3xl border border-dashed border-navy/15 bg-white/60 py-20 text-center">
+                <div className="text-base font-bold text-navy">
+                  {isRtl ? "لا توجد مشاريع مضافة حالياً" : "No projects found"}
+                </div>
+                <p className="mt-1 text-xs text-navy/50">
+                  {isRtl
+                    ? "ستظهر المشاريع هنا فور إضافتها من لوحة التحكم."
+                    : "Projects will appear here once added from the CMS admin console."}
+                </p>
+              </div>
+            ) : (
+              <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                {filtered.map((item, i) => (
+                   <Reveal key={`${active}-${item.slug}-${i}`} delay={(i % 3) * 80} className="h-full">
+                    <Link
+                      href={`/works/${item.slug}`}
+                      className="group flex h-full flex-col overflow-hidden rounded-3xl border border-navy/10 bg-white p-3.5 sm:p-4 text-left shadow-xs transition-all duration-500 hover:-translate-y-1.5 hover:border-orange/50 hover:shadow-xl hover:shadow-navy/10 focus:outline-none focus:ring-2 focus:ring-orange rtl:text-right"
+                    >
+                      {/* Photo Thumbnail Container */}
+                      <div className="relative aspect-[16/11] w-full overflow-hidden rounded-2xl bg-surface">
+                        <img
+                          src={item.coverImage}
+                          alt={item.title}
+                          loading="lazy"
+                          className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                        />
 
-                      {/* Top Overlay Badge & Action Button */}
-                      <div className="absolute inset-x-0 top-0 flex items-center justify-between p-3 sm:p-3.5">
-                        <span className="inline-flex items-center gap-1.5 rounded-full border border-white/30 bg-navy/80 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-white shadow-sm backdrop-blur-md transition-colors duration-300 group-hover:bg-navy">
-                          <span className="h-1.5 w-1.5 rounded-full bg-orange animate-pulse" />
-                          {item.category}
-                        </span>
+                        {/* Top Overlay Badge & Action Button */}
+                        <div className="absolute inset-x-0 top-0 flex items-center justify-between p-3 sm:p-3.5">
+                          <span className="inline-flex items-center gap-1.5 rounded-full border border-white/30 bg-navy/80 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-white shadow-sm backdrop-blur-md transition-colors duration-300 group-hover:bg-navy">
+                            <span className="h-1.5 w-1.5 rounded-full bg-orange animate-pulse" />
+                            {item.category}
+                          </span>
 
-                        <div className="grid h-8 w-8 place-items-center rounded-full border border-white/40 bg-white/90 text-navy shadow-sm backdrop-blur-md transition-all duration-300 group-hover:scale-110 group-hover:border-orange group-hover:bg-orange group-hover:text-white group-hover:shadow-md group-hover:shadow-orange/30">
-                          <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 rtl:rotate-[-90deg]" />
+                          <div className="grid h-8 w-8 place-items-center rounded-full border border-white/40 bg-white/90 text-navy shadow-sm backdrop-blur-md transition-all duration-300 group-hover:scale-110 group-hover:border-orange group-hover:bg-orange group-hover:text-white group-hover:shadow-md group-hover:shadow-orange/30">
+                            <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 rtl:rotate-[-90deg]" />
+                          </div>
                         </div>
                       </div>
-                    </div>
 
-                    {/* Card Content */}
-                    <div className="flex flex-1 flex-col justify-between pt-4 pb-1">
-                      <div>
-                        <div className="text-[11px] font-semibold uppercase tracking-wider text-orange">
-                          {item.location}
+                      {/* Card Content */}
+                      <div className="flex flex-1 flex-col justify-between pt-4 pb-1">
+                        <div>
+                          <div className="text-[11px] font-semibold uppercase tracking-wider text-orange">
+                            {item.location}
+                          </div>
+                          <h3 className="mt-1 font-display text-lg font-bold text-navy transition-colors duration-300 group-hover:text-orange sm:text-xl line-clamp-1">
+                            {item.title}
+                          </h3>
+                          <p className="mt-1 text-xs sm:text-sm text-navy/65 line-clamp-2 leading-relaxed">
+                            {item.subtitle}
+                          </p>
                         </div>
-                        <h3 className="mt-1 font-display text-lg font-bold text-navy transition-colors duration-300 group-hover:text-orange sm:text-xl line-clamp-1">
-                          {item.title}
-                        </h3>
-                        <p className="mt-1 text-xs sm:text-sm text-navy/65 line-clamp-2 leading-relaxed">
-                          {item.subtitle}
-                        </p>
-                      </div>
 
-                      {/* Card Footer Link */}
-                      <div className="mt-4 flex items-center justify-between border-t border-navy/5 pt-3">
-                        <span className="text-xs font-medium text-navy/50 truncate max-w-[55%]">
-                          {item.client}
-                        </span>
-                        <span className="inline-flex items-center gap-1 text-xs font-semibold text-orange transition-transform duration-300 group-hover:translate-x-0.5 rtl:group-hover:-translate-x-0.5">
-                          {isRtl ? "عرض التفاصيل" : "View Project"}
-                          <ArrowUpRight className="h-3 w-3 rtl:rotate-[-90deg]" />
-                        </span>
+                        {/* Card Footer Link */}
+                        <div className="mt-4 flex items-center justify-between border-t border-navy/5 pt-3">
+                          <span className="text-xs font-medium text-navy/50 truncate max-w-[55%]">
+                            {item.client}
+                          </span>
+                          <span className="inline-flex items-center gap-1 text-xs font-semibold text-orange transition-transform duration-300 group-hover:translate-x-0.5 rtl:group-hover:-translate-x-0.5">
+                            {isRtl ? "عرض التفاصيل" : "View Project"}
+                            <ArrowUpRight className="h-3 w-3 rtl:rotate-[-90deg]" />
+                          </span>
+                        </div>
                       </div>
-                    </div>
-                  </Link>
-                </Reveal>
-              ))}
-            </div>
+                    </Link>
+                  </Reveal>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </main>
