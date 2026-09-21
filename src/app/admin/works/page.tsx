@@ -31,8 +31,8 @@ export default function WorksAdminPage() {
     setLoading(true);
     try {
       const [projRes, catRes] = await Promise.all([
-        fetch("/api/admin/works"),
-        fetch("/api/admin/categories"),
+        fetch("/api/admin/works", { cache: "no-store" }),
+        fetch("/api/admin/categories", { cache: "no-store" }),
       ]);
       const projs = await projRes.json();
       const cats = await catRes.json();

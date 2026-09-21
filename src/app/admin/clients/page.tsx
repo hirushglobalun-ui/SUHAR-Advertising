@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Plus, Trash2, Pencil, X, Save, Upload, ExternalLink, Building2 } from "lucide-react";
+import { Plus, Trash2, Pencil, X, Save, Upload } from "lucide-react";
 import type { CMSClientLogo } from "@/types/cms";
 import { compressImage } from "@/lib/imageCompressor";
 
@@ -118,7 +118,6 @@ export default function ClientsAdminPage() {
               name_en: "",
               name_ar: "",
               logo_url: "",
-              website_url: "",
               is_active: true,
               display_order: clients.length + 1,
             })
@@ -211,38 +210,21 @@ export default function ClientsAdminPage() {
                 </p>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="mb-1 block text-xs font-bold uppercase tracking-wider text-slate-600">
-                    Website URL
-                  </label>
-                  <input
-                    type="url"
-                    value={editingItem.website_url || ""}
-                    onChange={(e) =>
-                      setEditingItem({ ...editingItem, website_url: e.target.value })
-                    }
-                    placeholder="https://..."
-                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2 text-xs outline-none focus:border-orange focus:bg-white"
-                  />
-                </div>
-
-                <div>
-                  <label className="mb-1 block text-xs font-bold uppercase tracking-wider text-slate-600">
-                    Display Order
-                  </label>
-                  <input
-                    type="number"
-                    value={editingItem.display_order ?? 1}
-                    onChange={(e) =>
-                      setEditingItem({
-                        ...editingItem,
-                        display_order: parseInt(e.target.value) || 1,
-                      })
-                    }
-                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2 text-xs outline-none focus:border-orange focus:bg-white"
-                  />
-                </div>
+              <div>
+                <label className="mb-1 block text-xs font-bold uppercase tracking-wider text-slate-600">
+                  Display Order
+                </label>
+                <input
+                  type="number"
+                  value={editingItem.display_order ?? 1}
+                  onChange={(e) =>
+                    setEditingItem({
+                      ...editingItem,
+                      display_order: parseInt(e.target.value) || 1,
+                    })
+                  }
+                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2 text-xs outline-none focus:border-orange focus:bg-white"
+                />
               </div>
 
               <div className="flex items-center justify-between border-t border-slate-100 pt-4">

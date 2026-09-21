@@ -4,6 +4,9 @@ import { getAdminSession } from "@/lib/auth/session";
 import { getCMSProjects, saveCMSProject } from "@/lib/firebase/db";
 import { projectCreateSchema } from "@/lib/validation";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export async function GET(request: Request) {
   try {
     const session = await getAdminSession();
@@ -20,7 +23,11 @@ export async function GET(request: Request) {
       (!session || searchParams.get("published") === "true") ? "newest" : "display_order";
 
     const projects = await getCMSProjects({ categorySlug: category, onlyPublished, sortBy });
-    return NextResponse.json(projects);
+    return NextResponse.json(projects, {
+      headers: {
+        "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
+      },
+    });
   } catch (err) {
     console.error("Fetch projects error:", err);
     return NextResponse.json({ error: "Failed to load projects" }, { status: 500 });

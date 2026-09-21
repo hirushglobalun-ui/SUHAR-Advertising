@@ -4,6 +4,9 @@ import { getAdminSession } from "@/lib/auth/session";
 import { saveCMSClient, deleteCMSClient } from "@/lib/firebase/db";
 import { clientLogoInputSchema } from "@/lib/validation";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export async function PUT(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
