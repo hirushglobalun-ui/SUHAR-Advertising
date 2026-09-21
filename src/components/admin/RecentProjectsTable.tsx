@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Pencil, Trash2 } from "lucide-react";
 import type { CMSProject } from "@/types/cms";
 import ProjectForm from "@/components/admin/ProjectForm";
+import { getProjectTimestamp } from "@/lib/utils";
 
 interface RecentProjectsTableProps {
   initialProjects: CMSProject[];
@@ -13,6 +14,11 @@ export default function RecentProjectsTable({ initialProjects }: RecentProjectsT
   const [projects, setProjects] = useState<CMSProject[]>(initialProjects);
   const [editingProject, setEditingProject] = useState<CMSProject | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+
+  const publishedProjects = projects.filter((p) => p.is_published);
+  const recentProjects = [...publishedProjects].sort(
+    (a, b) => getProjectTimestamp(b) - getProjectTimestamp(a)
+  );
 
   async function reloadProjects() {
     try {
@@ -65,7 +71,14 @@ export default function RecentProjectsTable({ initialProjects }: RecentProjectsT
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100 font-medium text-slate-700">
-            {projects.slice(0, 5).map((project) => (
+            {recentProjects.length === 0 ? (
+              <tr>
+                <td colSpan={5} className="px-6 py-8 text-center text-slate-400">
+                  No published projects found.
+                </td>
+              </tr>
+            ) : (
+              recentProjects.slice(0, 5).map((project) => (
               <tr key={project.id} className="hover:bg-slate-50/60 transition-colors">
                 <td className="px-6 py-3.5">
                   <div className="flex items-center gap-3">
@@ -131,8 +144,9 @@ export default function RecentProjectsTable({ initialProjects }: RecentProjectsT
                   </div>
                 </td>
               </tr>
-            ))}
-          </tbody>
+            ))
+          )}
+        </tbody>
         </table>
       </div>
 

@@ -14,13 +14,29 @@ export default function Process() {
   const { t, lang } = useLang();
   const steps = useT<[string, string][]>("process.steps");
 
+  const isArabic = lang === "ar";
+
+  // Always render exactly 6 process steps
+  const displaySteps: [string, string][] = [
+    ...steps.slice(0, 5),
+    steps[5] ??
+    (isArabic
+      ? ["الدعم", "صيانة مستمرة وتغطية ضمان."]
+      : ["Support", "Ongoing maintenance and warranty coverage."]),
+  ];
+
   const [scrollProgress, setScrollProgress] = useState(0);
   const [reducedMotion, setReducedMotion] = useState(false);
 
   const sectionRef = useRef<HTMLElement | null>(null);
   const lineRef = useRef<HTMLDivElement | null>(null);
 
+  // =========================================================
+  // ENGLISH - KEEP EXISTING SCROLLING
+  // =========================================================
   useEffect(() => {
+    if (isArabic) return;
+
     const section = sectionRef.current;
     const line = lineRef.current;
 
@@ -328,7 +344,6 @@ export default function Process() {
                 >
                   {/* Number card */}
                   <div className="relative mb-5">
-                    {/* Glow */}
                     <div className="absolute inset-0 rounded-3xl bg-gold/20 blur-md" />
 
                     {/* Number */}
@@ -364,12 +379,11 @@ export default function Process() {
                     </div>
                   </div>
 
-                  {/* Title */}
+                  {/* Content */}
                   <h3 className="font-display text-lg font-bold text-navy">
                     {title}
                   </h3>
 
-                  {/* Description */}
                   <p className="mt-2 text-sm leading-relaxed text-navy/75">
                     {desc}
                   </p>

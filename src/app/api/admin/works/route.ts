@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
 import { getAdminSession } from "@/lib/auth/session";
 import { getCMSProjects, saveCMSProject } from "@/lib/firebase/db";
-import { projectInputSchema } from "@/lib/validation";
+import { projectCreateSchema } from "@/lib/validation";
 
 export async function GET(request: Request) {
   try {
@@ -13,13 +13,20 @@ export async function GET(request: Request) {
     // Security: Unauthenticated public requests can ONLY view published projects
     const onlyPublished = !session || searchParams.get("published") === "true";
 
-    const projects = await getCMSProjects({ categorySlug: category, onlyPublished });
+    // Public frontend requests (no session, or explicit ?published=true) sort newest-first
+    // so newly created published projects appear at the top of Recent Projects automatically.
+    // Admin panel authenticated requests keep display_order ASC for manual ordering control.
+    const sortBy: "newest" | "display_order" =
+      (!session || searchParams.get("published") === "true") ? "newest" : "display_order";
+
+    const projects = await getCMSProjects({ categorySlug: category, onlyPublished, sortBy });
     return NextResponse.json(projects);
   } catch (err) {
     console.error("Fetch projects error:", err);
     return NextResponse.json({ error: "Failed to load projects" }, { status: 500 });
   }
 }
+
 
 export async function POST(request: Request) {
   try {
@@ -29,7 +36,7 @@ export async function POST(request: Request) {
     }
 
     const rawBody = await request.json();
-    const parseResult = projectInputSchema.safeParse(rawBody);
+    const parseResult = projectCreateSchema.safeParse(rawBody);
 
     if (!parseResult.success) {
       const errorMsg = parseResult.error.errors.map((e) => `${e.path.join(".")}: ${e.message}`).join(", ");

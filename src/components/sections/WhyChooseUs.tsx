@@ -36,7 +36,7 @@ export default function WhyChooseUs() {
                       <div className="grid h-12 w-12 place-items-center rounded-xl bg-orange/10 text-orange transition-all duration-300 group-hover:bg-orange group-hover:text-white group-hover:scale-105">
                         <Icon className="h-5 w-5" />
                       </div>
-                      <span className="font-mono text-xs font-bold text-navy/20">0{i + 1}</span>
+                      <span lang="en" dir="ltr" style={{ unicodeBidi: "isolate" }} className="font-mono text-xs font-bold text-navy/20">0{i + 1}</span>
                     </div>
                     <h3 className="mt-4 font-display text-lg font-bold text-navy group-hover:text-orange transition-colors">{title}</h3>
                     <p className="mt-2 text-sm leading-relaxed text-navy/60">{desc}</p>

@@ -189,11 +189,9 @@ export default function ClientsAdminPage() {
                   )}
                   <input
                     type="text"
-                    value={editingItem.logo_url || ""}
-                    onChange={(e) =>
-                      setEditingItem({ ...editingItem, logo_url: e.target.value })
-                    }
-                    placeholder="URL or upload below"
+                    value={editingItem.logo_url ? editingItem.logo_url.split("/").pop() || "" : ""}
+                    readOnly
+                    placeholder="Uploaded logo filename"
                     className="flex-1 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs outline-none focus:border-orange focus:bg-white font-mono"
                   />
                   <label className="inline-flex cursor-pointer items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-slate-700 hover:border-orange hover:text-orange shrink-0">

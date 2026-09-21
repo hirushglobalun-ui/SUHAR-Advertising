@@ -73,7 +73,7 @@ export default function Services() {
                         )}
                       </div>
 
-                      <span className="font-mono text-sm font-bold tracking-widest text-slate-300 transition-colors duration-300 group-hover:text-gold">
+                      <span className="font-mono text-sm font-bold tracking-widest text-slate-300 transition-colors duration-300 group-hover:text-gold" lang="en" dir="ltr" style={{ unicodeBidi: "isolate" }}>
                         {String(i + 1).padStart(2, "0")}
                       </span>
                     </div>

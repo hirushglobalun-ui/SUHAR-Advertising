@@ -46,10 +46,10 @@ export default function Clients() {
                 <img
                   src={b.logo}
                   alt={b.name}
-                  className="h-8 w-auto max-w-[130px] object-contain opacity-40 hover:opacity-100 transition-opacity grayscale hover:grayscale-0"
+                  className="h-8 w-auto max-w-[130px] object-contain opacity-85 hover:opacity-100 transition-opacity"
                 />
               ) : (
-                <span className="font-display text-xl sm:text-2xl font-extrabold tracking-tight text-navy/30 hover:text-navy transition-colors">
+                <span className="font-display text-xl sm:text-2xl font-extrabold tracking-tight text-navy hover:text-gold transition-colors">
                   {b.name}
                 </span>
               )}

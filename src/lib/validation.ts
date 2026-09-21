@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const projectInputSchema = z.object({
+export const baseProjectSchema = z.object({
   id: z.string().optional(),
   slug: z.string().regex(/^[a-z0-9-]+$/i).optional(),
   title_en: z.string().min(1, "English title is required").max(200),
@@ -24,13 +24,28 @@ export const projectInputSchema = z.object({
   deliverables_ar: z.array(z.string().max(200)).optional(),
   impact_en: z.array(z.string().max(200)).optional(),
   impact_ar: z.array(z.string().max(200)).optional(),
-  cover_image: z.string().max(1000).optional(),
-  gallery: z.array(z.string().max(1000)).optional(),
+  cover_image: z.string().max(2000).optional(),
+  gallery: z.array(z.string().max(2000)).optional(),
   is_featured: z.boolean().optional(),
   is_published: z.boolean().optional(),
   display_order: z.number().int().min(1).max(9999).optional(),
 });
 
+// Schema for creating a project (includes publishing validation)
+export const projectCreateSchema = baseProjectSchema.refine((data) => {
+  if (!data.is_published) return true;
+  const hasCover = typeof data.cover_image === "string" && data.cover_image.trim().length > 0;
+  const galleryCount = Array.isArray(data.gallery)
+    ? data.gallery.filter((i) => typeof i === "string" && i.trim().length > 0).length
+    : 0;
+  return hasCover && galleryCount >= 1;
+}, { message: "Published projects must have a cover image and at least 1 gallery image.", path: ["is_published"] });
+
+// Schema for updates (partial, no publishing rule)
+export const projectUpdateSchema = baseProjectSchema.partial();
+
+// Export base schema for other uses
+export const projectInputSchema = baseProjectSchema;
 export const categoryInputSchema = z.object({
   id: z.string().max(100).optional(),
   name_en: z.string().min(1, "English name is required").max(100),

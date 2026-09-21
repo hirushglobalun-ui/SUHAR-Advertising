@@ -127,17 +127,29 @@ export default function ProjectModal({ project, isOpen, onClose }: ProjectModalP
 
   const deliverables = (isRtl ? project.deliverables_ar : project.deliverables_en) || [];
 
-  // Extract all images for the slider
+  // Consolidate all project images (cover_image / mainImage + gallery photos) without duplicates
   let images: string[] = [];
-  if (Array.isArray(project.gallery) && project.gallery.length > 0) {
-    images = project.gallery.map((img) => getImgSrc(img)).filter(Boolean);
+
+  // 1. Add cover image first if available
+  const coverSrc = getImgSrc(project.cover_image || project.mainImage);
+  if (coverSrc && typeof coverSrc === "string" && coverSrc.trim().length > 0) {
+    images.push(coverSrc.trim());
   }
-  if (images.length === 0 && project.cover_image) {
-    images = [getImgSrc(project.cover_image)];
+
+  // 2. Add all gallery photos without duplicating the cover image
+  if (Array.isArray(project.gallery)) {
+    project.gallery.forEach((g) => {
+      const src = getImgSrc(g);
+      if (src && typeof src === "string" && src.trim().length > 0) {
+        const cleanSrc = src.trim();
+        if (!images.includes(cleanSrc)) {
+          images.push(cleanSrc);
+        }
+      }
+    });
   }
-  if (images.length === 0 && project.mainImage) {
-    images = [getImgSrc(project.mainImage)];
-  }
+
+  // 3. Fallback to default asset if no images found
   if (images.length === 0) {
     images = ["/assets/portfolio-1.jpg"];
   }
@@ -250,7 +262,7 @@ export default function ProjectModal({ project, isOpen, onClose }: ProjectModalP
               >
                 {images.map((img, idx) => (
                   <button
-                    key={img + idx}
+                    key={`modal-thumb-${idx}-${img}`}
                     type="button"
                     onClick={() => selectImage(idx)}
                     className={`relative aspect-[4/3] h-16 sm:h-20 shrink-0 overflow-hidden rounded-xl border-2 transition-all cursor-pointer ${

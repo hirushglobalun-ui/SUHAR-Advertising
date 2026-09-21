@@ -48,14 +48,29 @@ export default function ProjectDetailClient({
 
   const isRtl = lang === "ar";
 
-  // Consolidate all images (cover + gallery) into an array
+  // Consolidate all project images (cover_image / mainImage + gallery photos) without duplicates
   let images: string[] = [];
-  if (Array.isArray(project.gallery) && project.gallery.length > 0) {
-    images = project.gallery.map((g) => getImgSrc(g)).filter(Boolean);
+
+  // 1. Add cover image first if available
+  const coverSrc = getImgSrc((project as any).cover_image || project.mainImage);
+  if (coverSrc && typeof coverSrc === "string" && coverSrc.trim().length > 0) {
+    images.push(coverSrc.trim());
   }
-  if (images.length === 0 && project.mainImage) {
-    images = [getImgSrc(project.mainImage)];
+
+  // 2. Add all gallery photos without duplicating the cover image
+  if (Array.isArray(project.gallery)) {
+    project.gallery.forEach((g) => {
+      const src = getImgSrc(g);
+      if (src && typeof src === "string" && src.trim().length > 0) {
+        const cleanSrc = src.trim();
+        if (!images.includes(cleanSrc)) {
+          images.push(cleanSrc);
+        }
+      }
+    });
   }
+
+  // 3. Fallback to default asset if no images found
   if (images.length === 0) {
     images = ["/assets/portfolio-1.jpg"];
   }
@@ -267,7 +282,7 @@ export default function ProjectDetailClient({
                 >
                   {images.map((img, idx) => (
                     <button
-                      key={img + idx}
+                      key={`thumb-${idx}-${img}`}
                       type="button"
                       onClick={() => selectImage(idx)}
                       className={`relative aspect-[16/10] h-18 sm:h-22 shrink-0 overflow-hidden rounded-2xl border-2 transition-all cursor-pointer ${

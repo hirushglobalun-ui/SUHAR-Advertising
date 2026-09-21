@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
 import { getAdminSession } from "@/lib/auth/session";
 import { getCMSProjectById, saveCMSProject, deleteCMSProject } from "@/lib/firebase/db";
-import { projectInputSchema } from "@/lib/validation";
+import { projectCreateSchema, projectUpdateSchema } from "@/lib/validation";
 
 export async function GET(
   _request: Request,
@@ -46,7 +46,7 @@ export async function PUT(
     }
 
     const rawBody = await request.json();
-    const parseResult = projectInputSchema.partial().safeParse(rawBody);
+    const parseResult = projectUpdateSchema.safeParse(rawBody);
 
     if (!parseResult.success) {
       const errorMsg = parseResult.error.errors.map((e) => `${e.path.join(".")}: ${e.message}`).join(", ");
