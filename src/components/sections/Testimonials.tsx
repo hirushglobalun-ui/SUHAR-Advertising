@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Star, ChevronLeft, ChevronRight } from "lucide-react";
 import Reveal from "@/components/common/Reveal";
 import { useLang, useT } from "@/lib/i18n";
@@ -21,12 +21,16 @@ export default function Testimonials() {
   const [cmsTestimonials, setCmsTestimonials] = useState<CMSTestimonial[]>(
     []
   );
+
   const [api, setApi] = useState<CarouselApi>();
   const [canScrollPrev, setCanScrollPrev] = useState(false);
   const [canScrollNext, setCanScrollNext] = useState(false);
 
   const isRtl = lang === "ar";
 
+  // =========================================================
+  // FETCH CMS TESTIMONIALS
+  // =========================================================
   useEffect(() => {
     fetch("/api/admin/testimonials?published=true")
       .then((r) => r.json())
@@ -40,28 +44,12 @@ export default function Testimonials() {
       .catch(() => { });
   }, []);
 
-  useEffect(() => {
-    if (!api) return;
-
-    const updateButtons = () => {
-      setCanScrollPrev(api.canScrollPrev());
-      setCanScrollNext(api.canScrollNext());
-    };
-
-    updateButtons();
-
-    api.on("select", updateButtons);
-    api.on("reInit", updateButtons);
-
-    return () => {
-      api.off("select", updateButtons);
-      api.off("reInit", updateButtons);
-    };
-  }, [api]);
-
-  const displayList =
-    cmsTestimonials.length > 0
-      ? cmsTestimonials.map((item) => ({
+  // =========================================================
+  // TESTIMONIAL DATA
+  // =========================================================
+  const displayList = useMemo(() => {
+    if (cmsTestimonials.length > 0) {
+      return cmsTestimonials.map((item) => ({
         name:
           isRtl && item.person_name_ar
             ? item.person_name_ar
@@ -81,20 +69,54 @@ export default function Testimonials() {
             : item.text_en,
 
         rating: item.rating || 5,
-      }))
-      : (Array.isArray(staticItems) ? staticItems : []).map(
-        ([name, role, quote]) => ({
-          name,
-          role,
-          quote,
-          rating: 5,
-        })
-      );
+      }));
+    }
+
+    return (Array.isArray(staticItems) ? staticItems : []).map(
+      ([name, role, quote]) => ({
+        name,
+        role,
+        quote,
+        rating: 5,
+      })
+    );
+  }, [cmsTestimonials, staticItems, isRtl]);
 
   // =========================================================
-  // 360° INFINITE AUTO SCROLL
-  // English  -> Left to Right
-  // Arabic   -> Right to Left
+  // CREATE ENOUGH DUPLICATES
+  // =========================================================
+  const carouselItems = useMemo(() => {
+    if (displayList.length === 0) return [];
+
+    // Repeat the complete list many times so there is
+    // always another card available without blank space.
+    return Array.from({ length: 12 }, () => displayList).flat();
+  }, [displayList]);
+
+  // =========================================================
+  // CAROUSEL BUTTON STATE
+  // =========================================================
+  useEffect(() => {
+    if (!api) return;
+
+    const updateButtons = () => {
+      setCanScrollPrev(api.canScrollPrev());
+      setCanScrollNext(api.canScrollNext());
+    };
+
+    updateButtons();
+
+    api.on("select", updateButtons);
+    api.on("reInit", updateButtons);
+
+    return () => {
+      api.off("select", updateButtons);
+      api.off("reInit", updateButtons);
+    };
+  }, [api]);
+
+  // =========================================================
+  // AUTO SCROLL
   // =========================================================
   useEffect(() => {
     if (!api || displayList.length <= 1) return;
@@ -109,7 +131,10 @@ export default function Testimonials() {
   return (
     <section className="relative overflow-hidden bg-white py-14 text-navy lg:py-20">
       <div className="relative mx-auto max-w-7xl px-6 lg:px-10">
-        {/* Header */}
+
+        {/* =====================================================
+            HEADER
+        ===================================================== */}
         <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
           <div className="max-w-3xl">
             <Reveal>
@@ -126,7 +151,9 @@ export default function Testimonials() {
             </Reveal>
           </div>
 
-          {/* Carousel Controls */}
+          {/* ===================================================
+              CONTROLS
+          =================================================== */}
           <Reveal delay={150}>
             <div className="flex items-center gap-3">
               <button
@@ -158,7 +185,9 @@ export default function Testimonials() {
           </Reveal>
         </div>
 
-        {/* Horizontal Carousel */}
+        {/* =====================================================
+            TESTIMONIAL CAROUSEL
+        ===================================================== */}
         <div className="mt-10">
           <Carousel
             setApi={setApi}
@@ -166,14 +195,18 @@ export default function Testimonials() {
               align: "start",
               loop: true,
 
-              // Arabic: Right -> Left
-              // English: Left -> Right
+              // English -> normal direction
+              // Arabic  -> Right to Left
               direction: isRtl ? "rtl" : "ltr",
+
+              // Prevent the carousel from stopping because of
+              // insufficient scrollable content.
+              containScroll: false,
             }}
             className="w-full"
           >
             <CarouselContent className="-ml-4 sm:-ml-6">
-              {displayList.map((item, i) => (
+              {carouselItems.map((item, i) => (
                 <CarouselItem
                   key={`${item.name}-${i}`}
                   className="basis-full pl-4 sm:basis-1/2 sm:pl-6 lg:basis-1/3"
@@ -183,6 +216,7 @@ export default function Testimonials() {
                     className="h-full"
                   >
                     <div className="flex h-full flex-col justify-between rounded-3xl bg-[#062D4F] p-8 text-white shadow-xl shadow-navy/10 transition-transform duration-300 hover:-translate-y-1">
+
                       {/* Rating + Quote */}
                       <div>
                         <div className="flex gap-1 text-orange">
@@ -201,7 +235,7 @@ export default function Testimonials() {
                         </p>
                       </div>
 
-                      {/* User Details */}
+                      {/* Person Details */}
                       <div className="mt-8 flex items-center gap-3 border-t border-white/10 pt-6">
                         <div className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-gradient-to-br from-royal to-orange font-display text-sm font-bold text-white shadow-sm">
                           {item.name
