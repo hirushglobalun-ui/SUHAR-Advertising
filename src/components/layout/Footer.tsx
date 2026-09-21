@@ -111,7 +111,12 @@ export default function Footer() {
 
                 <li className="flex items-center gap-2">
                 <Phone className="h-4 w-4 text-orange shrink-0" />
-                <a href="tel:+96891909331" className="transition-colors hover:text-orange" dir="ltr" lang="en" style={{ unicodeBidi: "isolate" }}>
+                <a
+                  href="tel:+96891909331"
+                  dir="ltr"
+                  style={{ unicodeBidi: "isolate" }}
+                  className="transition-colors hover:text-orange"
+                >
                   +968 9190 9331
                 </a>
               </li>

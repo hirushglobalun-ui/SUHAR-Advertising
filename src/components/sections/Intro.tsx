@@ -79,15 +79,13 @@ export default function Intro() {
                   <Sparkles className="h-6 w-6" />
                 </div>
                 <div>
-                  <div className="font-display text-2xl font-extrabold text-navy" lang="en" dir="ltr" style={{ unicodeBidi: "isolate" }}>1996</div>
+                  <div className="font-display text-2xl font-extrabold text-navy">1996</div>
                   <div className="text-xs uppercase tracking-widest text-navy/60">
                     {lang === "ar" ? (
-                      <>
-                        تأسست ·{" "}
-                        <span lang="en" dir="ltr" style={{ unicodeBidi: "isolate" }}>28+</span>
-                        {" "}عاماً
-                      </>
-                    ) : "Established · 28+ Yrs"}
+                      <>تأسست · <span dir="ltr">28+</span> عاماً</>
+                    ) : (
+                      "Established · 28+ Yrs"
+                    )}
                   </div>
                 </div>
               </div>

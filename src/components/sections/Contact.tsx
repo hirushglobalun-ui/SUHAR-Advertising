@@ -76,20 +76,16 @@ export default function Contact() {
                       <div className="grid h-10 w-10 sm:h-11 sm:w-11 shrink-0 place-items-center rounded-xl bg-orange text-white transition-transform duration-300 group-hover:scale-105">
                         <c.icon className="h-5 w-5" />
                       </div>
-
-                      <div
-                        className={`min-w-0 flex-1 ${isArabic ? "text-right" : ""
-                          }`}
-                      >
+                      <div className="min-w-0 flex-1 text-right">
                         <div className="text-[11px] uppercase tracking-wider text-white/50">
                           {c.label}
                         </div>
 
                         <div
-                          className="truncate text-xs sm:text-sm font-semibold text-white transition-colors group-hover:text-orange"
-                          {...(c.ltr
-                            ? { dir: "ltr", lang: "en" }
-                            : {})}
+                          dir={c.icon === Phone ? "ltr" : undefined}
+                          className={`truncate text-xs sm:text-sm font-semibold text-white transition-colors group-hover:text-orange ${c.icon === Phone ? "text-right" : ""
+                            }`}
+                          style={c.icon === Phone ? { unicodeBidi: "isolate" } : undefined}
                         >
                           {c.value}
                         </div>
@@ -138,20 +134,12 @@ export default function Contact() {
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <Field label={t("contact.form.name")} name="name" required />
                 <Field label={t("contact.form.company")} name="company" />
-
-                <Field
-                  label={t("contact.form.email")}
-                  name="email"
-                  type="email"
-                  required
-                />
-
+                <Field label={t("contact.form.email")} name="email" type="email" required />
                 <Field
                   label={t("contact.form.phone")}
                   name="phone"
                   type="tel"
                 />
-
                 <div className="sm:col-span-2">
                   <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-white/60">
                     {t("contact.form.service")}
