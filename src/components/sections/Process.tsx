@@ -42,8 +42,6 @@ export default function Process() {
 
     if (!section) return;
 
-    const isArabic = lang === "ar";
-
     const prefersReduced = window.matchMedia(
       "(prefers-reduced-motion: reduce)"
     ).matches;
