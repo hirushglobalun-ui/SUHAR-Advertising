@@ -35,8 +35,11 @@ import {
   HeartHandshake,
 } from "lucide-react";
 
-export function getImgSrc(img: string | { src: string }) {
-  return typeof img === "string" ? img : img.src;
+export function getImgSrc(img: any): string {
+  if (!img) return "";
+  if (typeof img === "string") return img;
+  if (typeof img === "object" && img.src && typeof img.src === "string") return img.src;
+  return String(img);
 }
 
 export { heroImg, aboutImg, p1, p2, p3, p4, p5, p6 };

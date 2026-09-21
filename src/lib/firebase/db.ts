@@ -13,6 +13,7 @@ import {
 } from "firebase/firestore";
 import type { CMSProject, Category, CMSTestimonial, CMSClientLogo, CMSSettings } from "@/types/cms";
 import { translateEnglishToArabic } from "@/lib/translate";
+import { getProjectTimestamp } from "@/lib/utils";
 
 // Initial seed data from existing projects and data
 const INITIAL_CATEGORIES: Category[] = [
@@ -385,7 +386,11 @@ function saveLocalStore(store: CMSStoreData) {
 // -------------------------------------------------------------
 // PROJECTS / WORKS API
 // -------------------------------------------------------------
-export async function getCMSProjects(options?: { onlyPublished?: boolean; categorySlug?: string }): Promise<CMSProject[]> {
+export async function getCMSProjects(options?: {
+  onlyPublished?: boolean;
+  categorySlug?: string;
+  sortBy?: "display_order" | "newest";
+}): Promise<CMSProject[]> {
   const store = getLocalStore();
   const deletedSet = new Set(store.deleted_project_ids || []);
   const map = new Map<string, CMSProject>();
@@ -406,9 +411,8 @@ export async function getCMSProjects(options?: { onlyPublished?: boolean; catego
         for (const doc of snapshot.docs) {
           const remoteP = { id: doc.id, ...doc.data() } as CMSProject;
           if (!deletedSet.has(remoteP.id) && !deletedSet.has(remoteP.slug)) {
-            if (!map.has(remoteP.id)) {
-              map.set(remoteP.id, remoteP);
-            }
+            const localP = map.get(remoteP.id);
+            map.set(remoteP.id, localP ? { ...localP, ...remoteP } : remoteP);
           }
         }
       }
@@ -417,7 +421,30 @@ export async function getCMSProjects(options?: { onlyPublished?: boolean; catego
     }
   }
 
-  let list = Array.from(map.values()).sort((a, b) => (a.display_order ?? 0) - (b.display_order ?? 0));
+  let list = Array.from(map.values()).map((p) => {
+    const ts = getProjectTimestamp(p);
+    const isoDate = ts > 0 ? new Date(ts).toISOString() : new Date().toISOString();
+    return {
+      ...p,
+      created_at: p.created_at || (p as any).createdAt || isoDate,
+      createdAt: (p as any).createdAt || p.created_at || isoDate,
+    };
+  });
+
+  // Sort: "newest" = createdAt/created_at DESC (for public frontend Recent Projects);
+  // default = display_order ASC (for admin panel and category browsing)
+  if (options?.sortBy === "newest") {
+    list.sort((a, b) => {
+      const ta = getProjectTimestamp(a);
+      const tb = getProjectTimestamp(b);
+      if (tb !== ta) return tb - ta;
+      // Secondary: lower display_order first as tiebreaker for seed data
+      return (a.display_order ?? 999) - (b.display_order ?? 999);
+    });
+  } else {
+    list.sort((a, b) => (a.display_order ?? 0) - (b.display_order ?? 0));
+  }
+
   if (options?.onlyPublished) list = list.filter((p) => p.is_published);
   if (options?.categorySlug && options.categorySlug !== "All" && options.categorySlug !== "الكل") {
     list = list.filter((p) => p.category_slug === options.categorySlug);
@@ -546,12 +573,13 @@ export async function saveCMSProject(data: Partial<CMSProject> & { id?: string }
     impact_ar,
     cover_image: data.cover_image || existing?.cover_image || "/assets/portfolio-1.jpg",
     gallery: Array.isArray(data.gallery) && data.gallery.length > 0 
-      ? data.gallery 
+      ? data.gallery.filter((g) => typeof g === "string" && g.trim().length > 0) 
       : (existing?.gallery && existing.gallery.length > 0 ? existing.gallery : [data.cover_image || existing?.cover_image || "/assets/portfolio-1.jpg"]),
     is_published: data.is_published ?? existing?.is_published ?? true,
     is_featured: data.is_featured ?? existing?.is_featured ?? false,
     display_order: data.display_order ?? existing?.display_order ?? (store.projects.length + 1),
-    created_at: existing?.created_at || now,
+    created_at: existing?.created_at || (existing as any)?.createdAt || now,
+    createdAt: (existing as any)?.createdAt || existing?.created_at || now,
     updated_at: now,
   };
 

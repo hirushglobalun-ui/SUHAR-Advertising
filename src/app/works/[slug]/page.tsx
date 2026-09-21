@@ -42,7 +42,10 @@ export default async function ProjectPage({
         solution: { en: cmsProject.solution_en, ar: cmsProject.solution_ar },
         impact: { en: cmsProject.impact_en, ar: cmsProject.impact_ar },
         mainImage: cmsProject.cover_image,
-        gallery: cmsProject.gallery?.length ? cmsProject.gallery : [cmsProject.cover_image],
+        cover_image: cmsProject.cover_image,
+        gallery: Array.isArray(cmsProject.gallery) && cmsProject.gallery.length > 0 
+          ? cmsProject.gallery.filter((g) => typeof g === "string" && g.trim().length > 0)
+          : (cmsProject.cover_image ? [cmsProject.cover_image] : []),
       };
       return <ProjectDetailClient project={formatted} />;
     }

@@ -21,7 +21,7 @@ export default function Counter({ to, suffix = "" }: { to: number; suffix?: stri
     return () => cancelAnimationFrame(raf);
   }, [inView, to]);
   return (
-    <span ref={ref}>
+    <span ref={ref} dir="ltr" lang="en" style={{ unicodeBidi: "isolate" }}>
       {n}
       {suffix}
     </span>

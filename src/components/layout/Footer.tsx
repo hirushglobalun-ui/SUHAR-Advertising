@@ -109,9 +109,9 @@ export default function Footer() {
                 Muscat, Oman
               </li>
 
-              <li className="flex items-center gap-2">
+                <li className="flex items-center gap-2">
                 <Phone className="h-4 w-4 text-orange shrink-0" />
-                <a href="tel:+96891909331" className="transition-colors hover:text-orange">
+                <a href="tel:+96891909331" className="transition-colors hover:text-orange" dir="ltr" lang="en" style={{ unicodeBidi: "isolate" }}>
                   +968 9190 9331
                 </a>
               </li>
@@ -136,7 +136,7 @@ export default function Footer() {
         {/* Bottom */}
         <div className="mt-10 flex flex-col items-center justify-between gap-4 border-t border-black/10 pt-6 text-xs text-black sm:flex-row">
           <div>
-            © {new Date().getFullYear()} SUHAR Advertising.{" "}
+            <span lang="en" dir="ltr" style={{ unicodeBidi: "isolate" }}>© {new Date().getFullYear()} SUHAR Advertising.</span>{" "}
             {t("footer.rights")}
           </div>
 
