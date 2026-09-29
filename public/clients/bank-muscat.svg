@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 48" fill="none">
+  <rect x="8" y="10" width="28" height="28" rx="6" fill="#0A3866" fill-opacity="0.1"/>
+  <path d="M22 14L32 24L22 34L12 24L22 14Z" fill="#0A3866"/>
+  <path d="M22 19L27 24L22 29L17 24L22 19Z" fill="#FDB813"/>
+  <text x="44" y="25" font-family="system-ui, -apple-system, sans-serif" font-size="14" font-weight="800" fill="#062D4F">BANK</text>
+  <text x="44" y="36" font-family="system-ui, -apple-system, sans-serif" font-size="11" font-weight="700" letter-spacing="1" fill="#FDB813">MUSCAT</text>
+</svg>

@@ -51,9 +51,7 @@ export default function Process() {
       if (line) {
         gsap.set(line, {
           scaleX: 0,
-          transformOrigin: isArabic
-            ? "right center"
-            : "left center",
+          transformOrigin: isArabic ? "right center" : "left center",
         });
       }
 
@@ -76,24 +74,17 @@ export default function Process() {
       setReducedMotion(false);
 
       /* --------------------------------
-         Main scroll animation timeline
+         Main scroll animation timeline (fluid, no pin hijacking)
       -------------------------------- */
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: section,
-          start: "top 80px",
-          end: "+=1600",
-          scrub: 1,
-          pin: true,
-          pinSpacing: true,
+          start: "top 75%",
+          end: "bottom 65%",
+          scrub: 0.6,
           invalidateOnRefresh: true,
-
           onUpdate: (self) => {
-            const progress = Math.min(
-              1,
-              Math.max(0, self.progress)
-            );
-
+            const progress = Math.min(1, Math.max(0, self.progress));
             setScrollProgress(progress);
           },
         },
@@ -122,13 +113,13 @@ export default function Process() {
       window.clearTimeout(refreshTimer);
       ctx.revert();
     };
-  }, [lang]);
+  }, [lang, isArabic]);
 
   return (
     <section
       ref={sectionRef}
       id="process"
-      className="relative overflow-hidden bg-surface py-10 sm:py-14 lg:py-20"
+      className="relative overflow-hidden bg-surface py-10 sm:py-14 lg:py-20 scroll-mt-20"
       dir={lang === "ar" ? "rtl" : "ltr"}
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-10">
@@ -201,7 +192,7 @@ export default function Process() {
 
               return (
                 <div
-                  key={title}
+                  key={`${title}-${i}`}
                   className={`
                     relative
                     flex
@@ -241,7 +232,7 @@ export default function Process() {
                       duration-500
                       ease-out
                       ${isActive
-                        ? "scale-105 shadow-gold/40"
+                        ? "scale-105 shadow-gold/40 ring-gold"
                         : ""
                       }
                     `}
@@ -323,7 +314,7 @@ export default function Process() {
 
               return (
                 <div
-                  key={title}
+                  key={`${title}-${i}`}
                   className={`
                     relative
                     flex
@@ -334,7 +325,7 @@ export default function Process() {
                     ease-out
                     ${isActive
                       ? "translate-y-0 scale-100 opacity-100"
-                      : "translate-y-3 scale-95 opacity-0"
+                      : "translate-y-2 scale-[0.98] opacity-50 hover:opacity-80"
                     }
                   `}
                 >
@@ -361,7 +352,7 @@ export default function Process() {
                         duration-500
                         ease-out
                         ${isActive
-                          ? "scale-110 shadow-gold/40"
+                          ? "scale-105 shadow-gold/40 ring-gold"
                           : ""
                         }
                       `}
