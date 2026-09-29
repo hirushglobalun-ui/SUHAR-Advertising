@@ -45,7 +45,7 @@ export default function Header() {
           <img
             src="/logo/Suharlogo.webp"
             alt="SUHAR Advertising"
-            className="h-11 w-auto object-contain"
+            className="h-14 sm:h-16 w-auto object-contain transition-transform duration-200 hover:scale-105"
           />
         </Link>
 
