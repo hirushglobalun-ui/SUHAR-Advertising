@@ -85,44 +85,84 @@
   ],
   "clients": [
     {
-      "id": "client-1789974485621",
-      "name_en": "hirush",
-      "name_ar": "الهيروش",
-      "logo_url": "https://res.cloudinary.com/hflmixsy/image/upload/v1789974488/suhar_advertising/ljm5mgiiwh58kexrcnrn.webp",
-      "website_url": "",
-      "display_order": 11,
+      "id": "client-omantel",
+      "name_en": "Omantel",
+      "name_ar": "عمانتل",
+      "logo_url": "/clients/omantel.svg",
+      "website_url": "https://www.omantel.om",
+      "display_order": 1,
       "is_active": true,
-      "updated_at": "2026-09-21T07:08:05.621Z"
+      "updated_at": "2026-09-29T05:30:00.000Z"
     },
     {
-      "id": "client-1789979504542",
-      "name_en": "lACA",
-      "name_ar": "لاكا",
-      "logo_url": "https://res.cloudinary.com/hflmixsy/image/upload/v1789985879/suhar_advertising/on0iu29zatpbz3pbbogk.webp",
-      "website_url": "",
-      "display_order": 12,
+      "id": "client-bank-muscat",
+      "name_en": "Bank Muscat",
+      "name_ar": "بنك مسقط",
+      "logo_url": "/clients/bank-muscat.svg",
+      "website_url": "https://www.bankmuscat.com",
+      "display_order": 2,
       "is_active": true,
-      "updated_at": "2026-09-21T10:18:06.801Z"
+      "updated_at": "2026-09-29T05:30:00.000Z"
     },
     {
-      "id": "client-1789985781762",
-      "name_en": "sample",
-      "name_ar": "بياناته",
-      "logo_url": "https://res.cloudinary.com/hflmixsy/image/upload/v1789985777/suhar_advertising/gurrnfoidxawgc75pst9.webp",
-      "website_url": "",
-      "display_order": 11,
+      "id": "client-oq",
+      "name_en": "OQ",
+      "name_ar": "أوكيو",
+      "logo_url": "/clients/oq.svg",
+      "website_url": "https://www.oq.com",
+      "display_order": 3,
       "is_active": true,
-      "updated_at": "2026-09-21T10:16:21.762Z"
+      "updated_at": "2026-09-29T05:30:00.000Z"
     },
     {
-      "id": "client-1789985850503",
-      "name_en": "sample",
-      "name_ar": "بياناته",
-      "logo_url": "https://res.cloudinary.com/hflmixsy/image/upload/v1789985847/suhar_advertising/z6jhqwi38qeafboomfmu.webp",
-      "website_url": "https://www.ideal-group.de/en/ideal-food-solutions/",
+      "id": "client-shell",
+      "name_en": "Shell Oman",
+      "name_ar": "شل عُمان",
+      "logo_url": "/clients/shell.svg",
+      "website_url": "https://www.shell.com.om",
       "display_order": 4,
       "is_active": true,
-      "updated_at": "2026-09-21T10:18:39.553Z"
+      "updated_at": "2026-09-29T05:30:00.000Z"
+    },
+    {
+      "id": "client-lulu",
+      "name_en": "LuLu Hypermarket",
+      "name_ar": "لولو هايبرماركت",
+      "logo_url": "/clients/lulu.svg",
+      "website_url": "https://www.luluhypermarket.com",
+      "display_order": 5,
+      "is_active": true,
+      "updated_at": "2026-09-29T05:30:00.000Z"
+    },
+    {
+      "id": "client-al-fanar",
+      "name_en": "Al Fanar",
+      "name_ar": "الفنار",
+      "logo_url": "/clients/al-fanar.svg",
+      "website_url": "",
+      "display_order": 6,
+      "is_active": true,
+      "updated_at": "2026-09-29T05:30:00.000Z"
+    },
+    {
+      "id": "client-ooredoo",
+      "name_en": "Ooredoo",
+      "name_ar": "أوريدو",
+      "logo_url": "/clients/ooredoo.svg",
+      "website_url": "https://www.ooredoo.om",
+      "display_order": 7,
+      "is_active": true,
+      "updated_at": "2026-09-29T05:30:00.000Z"
+    },
+    {
+      "id": "client-nafith",
+      "name_en": "Nafith Logistics",
+      "name_ar": "نافذ للوجستيات",
+      "logo_url": "/clients/nafith.svg",
+      "website_url": "",
+      "display_order": 8,
+      "is_active": true,
+      "updated_at": "2026-09-29T05:30:00.000Z"
     }
   ],
   "settings": {
@@ -155,7 +195,9 @@
     "c-7",
     "c-8",
     "c-9",
-    "c-10"
+    "c-10",
+    "client-1789974485621",
+    "client-1789985781762"
   ],
   "deleted_project_ids": [
     "proj-1789662083355",

@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Providers } from "./providers";
+import WhatsAppButton from "@/components/common/WhatsAppButton";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -45,7 +46,10 @@ export default function RootLayout({
         />
       </head>
       <body className="bg-background text-foreground font-sans antialiased">
-        <Providers>{children}</Providers>
+        <Providers>
+          {children}
+          <WhatsAppButton />
+        </Providers>
       </body>
     </html>
   );

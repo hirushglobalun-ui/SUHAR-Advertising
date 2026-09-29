@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 150 48" fill="none">
+  <path d="M22 10C16 10 11 15 11 21C11 26 15 30 18 33L22 36L26 33C29 30 33 26 33 21C33 15 28 10 22 10Z" fill="#FDB813"/>
+  <path d="M22 13C18 13 14 17 14 21C14 24 17 28 20 30L22 32L24 30C27 28 30 24 30 21C30 17 26 13 22 13Z" fill="#DD1D21"/>
+  <text x="42" y="29" font-family="system-ui, -apple-system, sans-serif" font-size="16" font-weight="900" letter-spacing="2" fill="#062D4F">SHELL</text>
+</svg>
